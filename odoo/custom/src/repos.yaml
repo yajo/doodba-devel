@@ -1,0 +1,10 @@
+odoo:
+    defaults:
+        depth: $DEPTH_DEFAULT
+    remotes:
+        origin: https://github.com/OCA/OCB.git
+        odoo: https://github.com/odoo/odoo.git
+        openupgrade: https://github.com/OCA/OpenUpgrade.git
+    target: odoo master
+    merges:
+        - odoo master
