@@ -1,0 +1,8 @@
+./odoo:
+    defaults:
+        depth: $DEPTH_MERGE
+    remotes:
+        origin: https://github.com/odoo/odoo.git
+    target: origin master
+    merges:
+        - origin master
