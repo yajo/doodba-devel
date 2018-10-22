@@ -1,0 +1,9 @@
+build-essential
+python3-dev
+
+# server-backend mysqlclient
+default-libmysqlclient-dev
+
+# l10n-spain xmlsec
+libxmlsec1-dev
+pkg-config

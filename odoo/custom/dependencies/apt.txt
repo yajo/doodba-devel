@@ -1,0 +1,2 @@
+# l10n-spain, for faster builds
+python3-crypto
