@@ -1,3 +1,4 @@
+bank-payment: ["*"]
 crm: ["*"]
 event: ["*"]
 l10n-spain: ["*"]
