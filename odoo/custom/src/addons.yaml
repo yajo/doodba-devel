@@ -1,5 +1,7 @@
+event: ["*"]
 l10n-spain: ["*"]
 partner-contact: ["*"]
 server-tools: ["*"]
+social: ["*"]
 web: ["*"]
 website: ["*"]
