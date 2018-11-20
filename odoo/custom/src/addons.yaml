@@ -1,5 +1,6 @@
 l10n-spain: ["*"]
 partner-contact: ["*"]
+reporting-engine: ["*"]
 server-auth: ["*"]
 server-backend: ["*"]
 server-brand: ["*"]
