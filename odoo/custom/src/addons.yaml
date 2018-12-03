@@ -1,5 +1,6 @@
 account-financial-reporting: ["*"]
 account-financial-tools: ["*"]
+account-invoicing: ["*"]
 l10n-spain: ["*"]
 partner-contact: ["*"]
 server-tools: ["*"]
