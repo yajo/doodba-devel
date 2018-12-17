@@ -27,6 +27,7 @@ services:
                 PIP_INSTALL_ODOO: "false"
                 CLEAN: "false"
                 COMPILE: "false"
+                DEFAULT_REPO_PATTERN_ODOO: "https://github.com/odoo/odoo.git"
         environment:
             ADMIN_PASSWORD: admin
             PTVSD_ENABLE: "${DOODBA_PTVSD_ENABLE:-0}"
