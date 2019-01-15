@@ -1,4 +1,5 @@
 account-financial-reporting: ["*"]
+contract: ["*"]
 event: ["*"]
 l10n-spain: ["*"]
 partner-contact: ["*"]
