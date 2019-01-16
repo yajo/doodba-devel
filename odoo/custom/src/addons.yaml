@@ -1,4 +1,6 @@
 account-financial-reporting: ["*"]
+contract: ["*"]
+data-protection: ["*"]
 event: ["*"]
 l10n-spain: ["*"]
 mis-builder: ["*"]
