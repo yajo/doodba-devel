@@ -1,6 +1,2 @@
 checksumdir
-git+https://github.com/OCA/openupgradelib.git@master
-unicodecsv
-unidecode
-requests
-xlsxwriter
+bpython
