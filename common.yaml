@@ -29,6 +29,8 @@ services:
             POSTGRES_PASSWORD: "$DB_PASSWORD"
         volumes:
             - db:/var/lib/postgresql/data:z
+        command:
+            - -cwork_mem=32MB
 
     smtpfake:
         image: mailhog/mailhog
@@ -60,5 +62,7 @@ services:
             PGDATABASE: prod
             PGPASSWORD: "$DB_PASSWORD"
             PGUSER: "$DB_USER"
+            SMTP_HOST: smtplocal
         volumes:
+            - backup_cache:/root:z
             - filestore:/mnt/backup/src/odoo:z

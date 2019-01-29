@@ -7,6 +7,8 @@ services:
         restart: unless-stopped
         environment:
             INITIAL_LANG: "$INITIAL_LANG"
+            PGDATABASE: &dbname prod
+            SMTP_SERVER: smtplocal
         depends_on:
             - db
             - smtp
@@ -37,12 +39,18 @@ services:
         extends:
             file: common.yaml
             service: db
+        environment:
+            POSTGRES_DB: *dbname
         restart: unless-stopped
 
     smtp:
         extends:
             file: common.yaml
             service: smtpreal
+        networks:
+            default:
+                aliases:
+                    - smtplocal
         restart: unless-stopped
 
     backup:
@@ -63,6 +71,7 @@ networks:
         external: true
 
 volumes:
+    backup_cache:
     filestore:
     db:
     smtp:
