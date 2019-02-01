@@ -1,6 +1,4 @@
-checksumdir
-git+https://github.com/OCA/openupgradelib.git@master
-unicodecsv
-unidecode
-requests
-xlsxwriter
+-r https://raw.githubusercontent.com/OCA/l10n-spain/8.0/requirements.txt
+-r https://raw.githubusercontent.com/OCA/partner-contact/8.0/requirements.txt
+-r https://raw.githubusercontent.com/OCA/reporting-engine/8.0/requirements.txt
+-r https://raw.githubusercontent.com/OCA/server-tools/8.0/requirements.txt
