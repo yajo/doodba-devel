@@ -29,8 +29,9 @@ services:
                 COMPILE: "false"
         environment:
             ADMIN_PASSWORD: admin
+            DOODBA_ENVIRONMENT: devel
             PTVSD_ENABLE: "${DOODBA_PTVSD_ENABLE:-0}"
-            PGDATABASE: devel
+            PGDATABASE: &dbname devel
             PYTHONOPTIMIZE: ""
             SMTP_PORT: "1025"
             # You want demo data for development
@@ -57,6 +58,8 @@ services:
         extends:
             file: common.yaml
             service: db
+        environment:
+            POSTGRES_DB: *dbname
 
     smtp:
         extends:
