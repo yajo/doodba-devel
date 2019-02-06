@@ -4,3 +4,4 @@ unicodecsv
 unidecode
 requests
 xlsxwriter
+ptpython
