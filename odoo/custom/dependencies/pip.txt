@@ -1,2 +1,6 @@
-checksumdir
 ptpython
+
+-r https://raw.githubusercontent.com/OCA/partner-contact/10.0/requirements.txt
+-r https://raw.githubusercontent.com/OCA/server-tools/10.0/requirements.txt
+-r https://raw.githubusercontent.com/OCA/l10n-spain/10.0/requirements.txt
+-r https://raw.githubusercontent.com/OCA/social/10.0/requirements.txt
