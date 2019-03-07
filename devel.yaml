@@ -30,14 +30,14 @@ services:
                 DEFAULT_REPO_PATTERN_ODOO: "https://github.com/odoo/odoo.git"
         environment:
             ADMIN_PASSWORD: admin
-            DOODBA_ENVIRONMENT: devel
+            DOODBA_ENVIRONMENT: "${DOODBA_ENVIRONMENT-devel}"
             PTVSD_ENABLE: "${DOODBA_PTVSD_ENABLE:-0}"
             PGDATABASE: &dbname devel
             PYTHONOPTIMIZE: ""
             PYTHONPATH: /opt/odoo/custom/src/odoo
             SMTP_PORT: "1025"
-            # You want demo data for development
-            WITHOUT_DEMO: "false"
+            # To avoid installing demo data export DOODBA_WITHOUT_DEMO=all
+            WITHOUT_DEMO: "${DOODBA_WITHOUT_DEMO-false}"
         volumes:
             - ./odoo/custom:/opt/odoo/custom:ro,z
             - ./odoo/auto/addons:/opt/odoo/auto/addons:rw,z
