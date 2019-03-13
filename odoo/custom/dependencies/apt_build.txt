@@ -1,0 +1,4 @@
+build-essential
+libldap2-dev
+libsasl2-dev
+python-dev
