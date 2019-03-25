@@ -29,8 +29,8 @@ services:
                 COMPILE: "false"
                 DEFAULT_REPO_PATTERN_ODOO: "https://github.com/odoo/odoo.git"
         environment:
-            ADMIN_PASSWORD: admin
             DOODBA_ENVIRONMENT: "${DOODBA_ENVIRONMENT-devel}"
+            LIST_DB: "true"
             PTVSD_ENABLE: "${DOODBA_PTVSD_ENABLE:-0}"
             PGDATABASE: &dbname devel
             PYTHONOPTIMIZE: ""
@@ -62,6 +62,7 @@ services:
             service: db
         environment:
             POSTGRES_DB: *dbname
+            POSTGRES_PASSWORD: odoopassword
 
     smtp:
         extends:
