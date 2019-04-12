@@ -11,6 +11,7 @@ services:
             PGUSER: &dbuser "$DB_USER"
             DB_FILTER: "$DB_FILTER"
             PROXY_MODE: "$ODOO_PROXY_MODE"
+        hostname: "$SMTP_REAL_NON_CANONICAL_DEFAULT"
         tty: true
         volumes:
             - filestore:/var/lib/odoo:z
@@ -26,10 +27,10 @@ services:
         environment:
             POSTGRES_DB: *dbname
             POSTGRES_USER: *dbuser
+            CONF_EXTRA: |
+                work_mem = 32MB
         volumes:
             - db:/var/lib/postgresql/data:z
-        command:
-            - -cwork_mem=32MB
 
     smtpfake:
         image: mailhog/mailhog
