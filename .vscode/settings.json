@@ -21,4 +21,5 @@
     "python.pythonPath": "${workspaceRoot}/.vscode/doodba/python",
     "search.useIgnoreFiles": false,
     "search.followSymlinks": false,
+    "restructuredtext.confPath": "",
 }

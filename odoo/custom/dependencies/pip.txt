@@ -1,1 +1,3 @@
+https://github.com/OCA/openupgradelib/archive/master.zip
+oca.decorators
 ptpython
