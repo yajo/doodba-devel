@@ -1,6 +1,7 @@
 account-financial-reporting: ["*"]
 bank-payment: ["*"]
 crm: ["*"]
+e-commerce: ["*"]
 event: ["*"]
 l10n-spain: ["*"]
 partner-contact: ["*"]
