@@ -1,3 +1,4 @@
+apps-store: ["*"]
 e-commerce: ["*"]
 event: ["*"]
 l10n-spain: ["*"]
