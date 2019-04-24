@@ -1,6 +1,7 @@
 e-commerce: ["*"]
 event: ["*"]
 l10n-spain: ["*"]
+oca-custom: ["*"]
 partner-contact: ["*"]
 reporting-engine: ["*"]
 server-auth: ["*"]
