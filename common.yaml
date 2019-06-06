@@ -1,4 +1,4 @@
-version: "2.1"
+version: "2.4"
 services:
     odoo:
         image: $ODOO_IMAGE:$ODOO_MINOR
@@ -6,6 +6,8 @@ services:
             context: ./odoo
             args:
                 ODOO_VERSION: $ODOO_MINOR
+                UID: "${UID:-1000}"
+                GID: "${GID:-1000}"
         environment:
             PGDATABASE: &dbname prod
             PGUSER: &dbuser "$DB_USER"
@@ -24,13 +26,14 @@ services:
 
     db:
         image: tecnativa/postgres-autoconf:${DB_VERSION}-alpine
+        shm_size: 512mb
         environment:
             POSTGRES_DB: *dbname
             POSTGRES_USER: *dbuser
+            CONF_EXTRA: |
+                work_mem = 32MB
         volumes:
             - db:/var/lib/postgresql/data:z
-        command:
-            - -cwork_mem=32MB
 
     smtpfake:
         image: mailhog/mailhog
