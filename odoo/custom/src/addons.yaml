@@ -1,4 +1,5 @@
 apps-store: ["*"]
+data-protection: ["*"]
 e-commerce: ["*"]
 event: ["*"]
 l10n-spain: ["*"]
