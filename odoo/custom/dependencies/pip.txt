@@ -1,4 +1,5 @@
 ptpython
+git+https://github.com/OCA/openupgradelib.git
 
 -r https://raw.githubusercontent.com/OCA/l10n-spain/11.0/requirements.txt
 -r https://raw.githubusercontent.com/OCA/server-auth/11.0/requirements.txt
