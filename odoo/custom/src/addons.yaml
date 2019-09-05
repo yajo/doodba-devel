@@ -1,4 +1,5 @@
 account-financial-reporting: ["*"]
+bank-statement-import: ["*"]
 contract: ["*"]
 crm: ["*"]
 e-commerce: ["*"]
