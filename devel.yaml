@@ -1,4 +1,4 @@
-version: "2.1"
+version: "2.4"
 
 services:
     odoo_proxy:
@@ -28,8 +28,8 @@ services:
                 CLEAN: "false"
                 COMPILE: "false"
         environment:
-            ADMIN_PASSWORD: admin
             DOODBA_ENVIRONMENT: "${DOODBA_ENVIRONMENT-devel}"
+            LIST_DB: "true"
             PTVSD_ENABLE: "${DOODBA_PTVSD_ENABLE:-0}"
             PGDATABASE: &dbname devel
             PYTHONOPTIMIZE: ""
@@ -51,6 +51,9 @@ services:
             - wdb
         command:
             - odoo
+            - --limit-memory-soft=0
+            - --limit-time-real-cron=9999999
+            - --limit-time-real=9999999
             - --workers=0
 
     db:
@@ -59,6 +62,7 @@ services:
             service: db
         environment:
             POSTGRES_DB: *dbname
+            POSTGRES_PASSWORD: odoopassword
 
     smtp:
         extends:
