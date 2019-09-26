@@ -1,0 +1,73 @@
+{
+    "folders": [
+        {
+            "path": "odoo/custom/src/account-financial-reporting"
+        },
+        {
+            "path": "odoo/custom/src/apps-store"
+        },
+        {
+            "path": "odoo/custom/src/data-protection"
+        },
+        {
+            "path": "odoo/custom/src/e-commerce"
+        },
+        {
+            "path": "odoo/custom/src/event"
+        },
+        {
+            "path": "odoo/custom/src/hr"
+        },
+        {
+            "path": "odoo/custom/src/knowledge"
+        },
+        {
+            "path": "odoo/custom/src/l10n-spain"
+        },
+        {
+            "path": "odoo/custom/src/multi-company"
+        },
+        {
+            "path": "odoo/custom/src/oca-custom"
+        },
+        {
+            "path": "odoo/custom/src/odoo"
+        },
+        {
+            "path": "odoo/custom/src/partner-contact"
+        },
+        {
+            "path": "odoo/custom/src/project"
+        },
+        {
+            "path": "odoo/custom/src/reporting-engine"
+        },
+        {
+            "path": "odoo/custom/src/server-auth"
+        },
+        {
+            "path": "odoo/custom/src/server-backend"
+        },
+        {
+            "path": "odoo/custom/src/server-brand"
+        },
+        {
+            "path": "odoo/custom/src/server-tools"
+        },
+        {
+            "path": "odoo/custom/src/server-ux"
+        },
+        {
+            "path": "odoo/custom/src/social"
+        },
+        {
+            "path": "odoo/custom/src/web"
+        },
+        {
+            "path": "odoo/custom/src/website"
+        },
+        {
+            "path": "."
+        }
+    ]
+}
