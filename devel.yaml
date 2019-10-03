@@ -1,4 +1,4 @@
-version: "2.1"
+version: "2.4"
 
 services:
     odoo_proxy:
@@ -28,13 +28,15 @@ services:
                 CLEAN: "false"
                 COMPILE: "false"
         environment:
-            ADMIN_PASSWORD: admin
+            DOODBA_ENVIRONMENT: "${DOODBA_ENVIRONMENT-devel}"
+            LIST_DB: "true"
             PTVSD_ENABLE: "${DOODBA_PTVSD_ENABLE:-0}"
             PGDATABASE: &dbname devel
             PYTHONOPTIMIZE: ""
+            PYTHONPATH: /opt/odoo/custom/src/odoo
             SMTP_PORT: "1025"
-            # You want demo data for development
-            WITHOUT_DEMO: "false"
+            # To avoid installing demo data export DOODBA_WITHOUT_DEMO=all
+            WITHOUT_DEMO: "${DOODBA_WITHOUT_DEMO-false}"
         volumes:
             - ./odoo/custom:/opt/odoo/custom:ro,z
             - ./odoo/auto/addons:/opt/odoo/auto/addons:rw,z
@@ -49,6 +51,9 @@ services:
             - wdb
         command:
             - odoo
+            - --limit-memory-soft=0
+            - --limit-time-real-cron=9999999
+            - --limit-time-real=9999999
             - --workers=0
             - --dev
 
@@ -58,6 +63,7 @@ services:
             service: db
         environment:
             POSTGRES_DB: *dbname
+            POSTGRES_PASSWORD: odoopassword
 
     smtp:
         extends:
