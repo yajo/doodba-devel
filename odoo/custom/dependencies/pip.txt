@@ -1,3 +1,12 @@
 git+https://github.com/OCA/openupgradelib.git@master
 unicodecsv
 unidecode
+
+# OCA dependencies
+-r https://raw.githubusercontent.com/OCA/l10n-spain/9.0/requirements.txt
+-r https://raw.githubusercontent.com/OCA/partner-contact/9.0/requirements.txt
+-r https://raw.githubusercontent.com/OCA/report-print-send/9.0/requirements.txt
+-r https://raw.githubusercontent.com/OCA/server-tools/9.0/requirements.txt
+
+# HACK https://github.com/Kozea/wdb/pull/141
+simplejson
