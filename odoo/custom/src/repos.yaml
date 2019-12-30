@@ -15,3 +15,12 @@
         - odoo $ODOO_VERSION
         # Example of a merge of the PR with the number <PR>
         # - oca refs/pull/<PR>/head
+
+enterprise:
+    defaults:
+        depth: $DEPTH_MERGE
+    remotes:
+        origin: git@github.com:odoo/enterprise.git
+    target: origin $ODOO_VERSION
+    merges:
+        - origin $ODOO_VERSION
