@@ -1,5 +1,7 @@
+account-invoice-reporting: ["*"]
 l10n-spain: ["*"]
 partner-contact: ["*"]
+product-attribute: ["*"]
 server-auth: ["*"]
 server-backend: ["*"]
 server-brand: ["*"]
