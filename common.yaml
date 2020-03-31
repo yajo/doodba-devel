@@ -1,4 +1,5 @@
 version: "2.4"
+
 services:
     odoo:
         image: $ODOO_IMAGE:$ODOO_MINOR
@@ -19,6 +20,7 @@ services:
         volumes:
             - filestore:/var/lib/odoo:z
         labels:
+            traefik.backend.buffering.retryExpression: IsNetworkError() && Attempts() < 5
             traefik.docker.network: "inverseproxy_shared"
             traefik.enable: "true"
             traefik.frontend.passHostHeader: "true"
@@ -78,6 +80,7 @@ services:
             PGDATABASE: *dbname
             PGUSER: *dbuser
             SMTP_HOST: smtplocal
+            TZ: "$BACKUP_TZ"
         volumes:
             - backup_cache:/root:z
             - filestore:/mnt/backup/src/odoo:z
