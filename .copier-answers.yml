@@ -1,13 +1,12 @@
 # Changes here will be overwritten by Copier
-_commit: v1.0.1
+_commit: v1.5.4
 _src_path: https://github.com/Tecnativa/doodba-copier-template.git
-backup_aws_access_key_id: null
-backup_aws_secret_access_key: null
 backup_deletion: true
 backup_dst: null
 backup_email_from: null
 backup_email_to: null
 backup_tz: UTC
+cidr_whitelist: null
 domain_prod: null
 domain_prod_alternatives: null
 domain_test: null
@@ -18,9 +17,13 @@ odoo_listdb: true
 odoo_oci_image: null
 odoo_proxy: traefik
 odoo_version: 11.0
+paths_without_crawlers:
+  - /web
+  - /website/info
 postgres_dbname: prod
 postgres_username: odoo
 postgres_version: 10
+project_author: Tecnativa
 project_license: BSL-1.0
 project_name: doodba-devel-11.0
 smtp_canonical_default: null

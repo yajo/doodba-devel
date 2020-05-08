@@ -1,8 +1,8 @@
 [![Doodba deployment](https://img.shields.io/badge/deployment-doodba-informational)](https://github.com/Tecnativa/doodba)
-[![Last template update](https://img.shields.io/badge/last%20template%20update-v1.0.1-informational)](https://github.com/Tecnativa/doodba-copier-template/tree/v1.0.1)
-[![Odoo](https://img.shields.io/badge/odoo-v11-a3478a)](https://github.com/odoo/odoo/tree/11)
+[![Last template update](https://img.shields.io/badge/last%20template%20update-v1.5.4-informational)](https://github.com/Tecnativa/doodba-copier-template/tree/v1.5.4)
+[![Odoo](https://img.shields.io/badge/odoo-v11.0-a3478a)](https://github.com/odoo/odoo/tree/11.0)
 [![BSL-1.0 license](https://img.shields.io/badge/license-BSL--1.0-success})](LICENSE)
-[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://pre-commit.com/)
 
 # doodba-devel-11.0 - a Doodba deployment
 
