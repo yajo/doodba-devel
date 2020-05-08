@@ -7,9 +7,9 @@ backup_email_from: null
 backup_email_to: null
 backup_tz: UTC
 cidr_whitelist: null
-domain_prod: null
+domain_prod: prod.doodba11.127.0.0.1.sslip.io
 domain_prod_alternatives: null
-domain_test: null
+domain_test: test.doodba11.127.0.0.1.sslip.io
 gitlab_url: null
 odoo_dbfilter: .*
 odoo_initial_lang: en_US
