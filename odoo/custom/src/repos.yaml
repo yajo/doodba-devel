@@ -1,11 +1,11 @@
 # See https://github.com/Tecnativa/doodba#optodoocustomsrcreposyaml
 ./odoo:
-    defaults:
-        depth: $DEPTH_MERGE
-    remotes:
-        origin: https://github.com/odoo/odoo.git
-    target: origin master
-    merges:
-        - origin master
-        # Example of a merge of the PR with the number <PR>
-        # - oca refs/pull/<PR>/head
+  defaults:
+    depth: $DEPTH_MERGE
+  remotes:
+    origin: https://github.com/odoo/odoo.git
+  target: origin master
+  merges:
+    - origin master
+    # Example of a merge of the PR with the number <PR>
+    # - oca refs/pull/<PR>/head
