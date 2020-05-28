@@ -26,6 +26,30 @@ services:
       traefik.frontend.headers.customResponseHeaders: "X-Robots-Tag:noindex, nofollow"
       traefik.longpolling.frontend.rule: "Host:${DOMAIN_TEST};PathPrefix:/longpolling/"
       traefik.www.frontend.rule: "Host:${DOMAIN_TEST}"
+      # Forbid crawlers
+      ? traefik.http.middlewares.doodba-devel-master-13-0-test-forbid-crawlers.headers.customResponseHeaders.X-Robots-Tag
+      : noindex, nofollow
+      # Main service
+      ? traefik.http.middlewares.doodba-devel-master-13-0-test-buffering.buffering.retryExpression
+      : IsNetworkError() && Attempts() < 5
+      traefik.http.middlewares.doodba-devel-master-13-0-test-compress.compress: "true"
+      traefik.http.routers.doodba-devel-master-13-0-test-main.entrypoints: "web-main"
+      traefik.http.routers.doodba-devel-master-13-0-test-main.middlewares:
+        doodba-devel-master-13-0-test-buffering, doodba-devel-master-13-0-test-compress,
+        doodba-devel-master-13-0-test-forbid-crawlers
+      traefik.http.routers.doodba-devel-master-13-0-test-main.rule: "host(`${DOMAIN_TEST}`)"
+      traefik.http.routers.doodba-devel-master-13-0-test-main.service: "doodba-devel-master-13-0-test-main"
+      traefik.http.routers.doodba-devel-master-13-0-test-main.tls.certresolver: "letsencrypt"
+      traefik.http.services.doodba-devel-master-13-0-test-main.loadbalancer.server.port: 8069
+      # Longpolling service
+      traefik.http.routers.doodba-devel-master-13-0-test-longpolling.entrypoints: "web-main"
+      traefik.http.routers.doodba-devel-master-13-0-test-longpolling.middlewares: doodba-devel-master-13-0-test-forbid-crawlers
+      traefik.http.routers.doodba-devel-master-13-0-test-longpolling.rule:
+        "host(`${DOMAIN_TEST}`) && pathprefix(`/longpolling/`)"
+      traefik.http.routers.doodba-devel-master-13-0-test-longpolling.service: "doodba-devel-master-13-0-test-longpolling"
+      traefik.http.routers.doodba-devel-master-13-0-test-longpolling.tls: "true"
+      traefik.http.routers.doodba-devel-master-13-0-test-longpolling.tls.certresolver: "letsencrypt"
+      traefik.http.services.doodba-devel-master-13-0-test-longpolling.loadbalancer.server.port: 8072
     command:
       - odoo
       - --workers=2
@@ -55,6 +79,18 @@ services:
       traefik.frontend.passHostHeader: "true"
       traefik.frontend.rule: "Host:${DOMAIN_TEST};PathPrefixStrip:/smtpfake/"
       traefik.port: "8025"
+      # Mailhog service
+      traefik.http.middlewares.doodba-devel-master-13-0-test-mailhog-stripprefix.stripPrefix.prefixes: /smtpfake
+      traefik.http.routers.doodba-devel-master-13-0-test-mailhog.entrypoints: web-main
+      traefik.http.routers.doodba-devel-master-13-0-test-mailhog.middlewares:
+        doodba-devel-master-13-0-test-buffering, doodba-devel-master-13-0-test-compress,
+        doodba-devel-master-13-0-test-forbid-crawlers,
+        doodba-devel-master-13-0-test-mailhog-stripprefix
+      traefik.http.routers.doodba-devel-master-13-0-test-mailhog.rule:
+        Host(`${DOMAIN_TEST}`) && PathPrefix(`/smtpfake/`)
+      traefik.http.routers.doodba-devel-master-13-0-test-mailhog.service: doodba-devel-master-13-0-test-mailhog
+      traefik.http.routers.doodba-devel-master-13-0-test-mailhog.tls.certresolver: letsencrypt
+      traefik.http.services.doodba-devel-master-13-0-test-mailhog.loadbalancer.server.port: 8025
     volumes:
       - "smtpconf:/etc/mailhog:ro,z"
     entrypoint: [sh, -c]
