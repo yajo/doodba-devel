@@ -27,7 +27,6 @@ services:
         PIP_INSTALL_ODOO: "false"
         CLEAN: "false"
         COMPILE: "false"
-        DEFAULT_REPO_PATTERN_ODOO: "https://github.com/odoo/odoo.git"
     environment:
       DOODBA_ENVIRONMENT: "${DOODBA_ENVIRONMENT-devel}"
       LIST_DB: "true"
@@ -56,7 +55,6 @@ services:
       - --limit-time-real-cron=9999999
       - --limit-time-real=9999999
       - --workers=0
-      # XXX Odoo v8 has no `--dev` mode; Odoo v9 has no parameters
       - --dev=reload,qweb,werkzeug,xml
 
   db:

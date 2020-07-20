@@ -1,12 +1,14 @@
 {
   "recommendations": [
     "dbaeumer.vscode-eslint",
+    "dchanco.vsc-invoke",
     "EditorConfig.editorconfig",
-    "lextudio.restructuredtext",
+    "esbenp.prettier-vscode",
     "mrorz.language-gettext",
-    "ms-python.python",
     "ms-azuretools.vscode-docker",
-    "qub.qub-xml-vscode",
+    "ms-python.python",
+    "redhat.vscode-xml",
+    "samuelcolvin.jinjahtml",
     "syler.sass-indented"
   ]
 }

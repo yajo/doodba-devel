@@ -4,214 +4,34 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Set up VSCode development environment",
-      "type": "process",
-      "command": "python3",
-      "args": [
-        ".vscode/doodbasetup.py"
-      ],
-      "problemMatcher": [],
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared",
-        "showReuseMessage": false
-      },
-    },
-    {
-      "label": "Update git code",
-      "type": "shell",
-      "command": "env",
-      "args": [
-        {
-          "value": "UID=$(id -u)",
-          "quoting": "weak"
-        },
-        {
-          "value": "GID=$(id -g)",
-          "quoting": "weak"
-        },
-        {
-          "value": "UMASK=$(umask)",
-          "quoting": "weak"
-        },
-        "docker-compose",
-        "--file=setup-devel.yaml",
-        "run",
-        "--rm",
-        "odoo"
-      ],
-      "options": {
-        "shell": {
-          "executable": "sh",
-          "args": [
-            "-c"
-          ]
-        },
-        "cwd": "${workspaceRoot}"
-      },
-      "group": "build",
-      "problemMatcher": [],
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "dedicated",
-        "showReuseMessage": false
-      },
-    },
-    {
-      "label": "Pull images",
-      "type": "process",
-      "command": "docker-compose",
-      "args": [
-        "pull"
-      ],
-      "group": "build",
-      "presentation": {
-        "echo": true,
-        "reveal": "silent",
-        "focus": false,
-        "panel": "shared",
-        "showReuseMessage": true,
-        "clear": false,
-      },
-      "problemMatcher": [],
-    },
-    {
-      "label": "Build images",
-      "type": "shell",
-      "command": "env",
-      "args": [
-        {
-          "value": "UID=$(id -u)",
-          "quoting": "weak"
-        },
-        {
-          "value": "GID=$(id -g)",
-          "quoting": "weak"
-        },
-        "docker-compose",
-        "build",
-        "--pull"
-      ],
-      "options": {
-        "shell": {
-          "executable": "sh",
-          "args": [
-            "-c"
-          ]
-        },
-        "cwd": "${workspaceRoot}"
-      },
-      "group": "build",
-      "presentation": {
-        "echo": true,
-        "reveal": "silent",
-        "focus": false,
-        "panel": "shared",
-        "showReuseMessage": true,
-        "clear": false,
-      },
-      "problemMatcher": [],
-    },
-    {
-      "label": "Start project",
-      "type": "process",
-      "command": "docker-compose",
-      "args": [
-        "up",
-        "-d"
-      ],
-      "presentation": {
-        "echo": true,
-        "reveal": "silent",
-        "focus": false,
-        "panel": "shared",
-        "showReuseMessage": true,
-        "clear": false,
-      },
-      "problemMatcher": [],
-    },
-    {
       "label": "Start project in debug mode",
       "type": "process",
-      "command": "docker-compose",
-      "args": [
-        "up",
-        "-d"
-      ],
-      "options": {
-        "env": {
-          "DOODBA_PTVSD_ENABLE": "1"
-        }
-      },
+      "command": "python3",
+      "args": ["-minvoke", "start", "--detach", "--ptvsd"],
       "presentation": {
         "echo": true,
         "reveal": "silent",
         "focus": false,
         "panel": "shared",
         "showReuseMessage": true,
-        "clear": false,
+        "clear": false
       },
-      "problemMatcher": [],
+      "problemMatcher": []
     },
     {
       "label": "Stop project",
       "type": "process",
-      "command": "docker-compose",
-      "args": ["stop"],
+      "command": "python3",
+      "args": ["-minvoke", "stop"],
       "presentation": {
         "echo": true,
         "reveal": "silent",
         "focus": false,
         "panel": "shared",
         "showReuseMessage": true,
-        "clear": false,
+        "clear": false
       },
-      "problemMatcher": [],
-    },
-    {
-      "label": "Restart Odoo containers",
-      "type": "process",
-      "command": "docker-compose",
-      "args": [
-        "restart",
-        "-t0",
-        "odoo",
-        "odoo_proxy"
-      ],
-      "presentation": {
-        "echo": true,
-        "reveal": "silent",
-        "focus": false,
-        "panel": "shared",
-        "showReuseMessage": true,
-        "clear": false,
-      },
-      "problemMatcher": [],
-    },
-    {
-      "label": "Last logs",
-      "type": "process",
-      "command": "docker-compose",
-      "args": [
-        "logs",
-        "--tail",
-        "20",
-        "-f"
-      ],
-      "isBackground": true,
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "dedicated",
-        "showReuseMessage": true,
-        "clear": true,
-      },
-      "problemMatcher": [],
-    },
-  ],
+      "problemMatcher": []
+    }
+  ]
 }
