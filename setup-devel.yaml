@@ -10,30 +10,30 @@
 version: "2.4"
 
 services:
-    odoo:
-        image: $ODOO_IMAGE:$ODOO_MINOR
-        build:
-            context: ./odoo
-            args:
-                AGGREGATE: "false"
-                DEPTH_DEFAULT: 100
-                ODOO_VERSION: $ODOO_MINOR
-                PYTHONOPTIMIZE: ""
-                PIP_INSTALL_ODOO: "false"
-                CLEAN: "false"
-                COMPILE: "false"
-        networks:
-            - public
-        volumes:
-            - ./odoo/custom/src:/opt/odoo/custom/src:rw,z
-        environment:
-            DEPTH_DEFAULT: 100
-            # XXX Export these variables before running setup to own the files
-            UID: "${UID:-1000}"
-            GID: "${GID:-1000}"
-            UMASK: "$UMASK"
-        user: root
-        entrypoint: autoaggregate
+  odoo:
+    image: $ODOO_IMAGE:$ODOO_MINOR
+    build:
+      context: ./odoo
+      args:
+        AGGREGATE: "false"
+        DEPTH_DEFAULT: 100
+        ODOO_VERSION: $ODOO_MINOR
+        PYTHONOPTIMIZE: ""
+        PIP_INSTALL_ODOO: "false"
+        CLEAN: "false"
+        COMPILE: "false"
+    networks:
+      - public
+    volumes:
+      - ./odoo/custom/src:/opt/odoo/custom/src:rw,z
+    environment:
+      DEPTH_DEFAULT: 100
+      # XXX Export these variables before running setup to own the files
+      UID: "${UID:-1000}"
+      GID: "${GID:-1000}"
+      UMASK: "$UMASK"
+    user: root
+    entrypoint: autoaggregate
 
 networks:
-    public:
+  public:
