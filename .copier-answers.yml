@@ -1,3 +1,34 @@
 # Changes here will be overwritten by Copier
-_commit: v0.0.0-0-0
+_commit: v1.8.0
 _src_path: https://github.com/Tecnativa/doodba-copier-template.git
+backup_deletion: false
+backup_dst: null
+backup_email_from: null
+backup_email_to: null
+backup_tz: UTC
+cidr_whitelist: null
+domain_prod: null
+domain_prod_alternatives: null
+domain_test: null
+gitlab_url: null
+odoo_dbfilter: .*
+odoo_initial_lang: en_US
+odoo_listdb: true
+odoo_oci_image: null
+odoo_proxy: traefik
+odoo_version: 8.0
+paths_without_crawlers:
+  - /web
+  - /website/info
+postgres_dbname: prod
+postgres_username: odoo
+postgres_version: 12
+project_author: Jairo Llopis
+project_license: BSL-1.0
+project_name: doodba-devel
+smtp_canonical_default: null
+smtp_canonical_domains: null
+smtp_default_from: null
+smtp_relay_host: null
+smtp_relay_port: 587
+smtp_relay_user: null
