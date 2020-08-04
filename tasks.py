@@ -147,7 +147,7 @@ def start(c, detach=True, ptvsd=False):
     if detach:
         cmd += " --detach"
     with c.cd(str(PROJECT_ROOT)):
-        c.run(cmd, env={"DOODBA_PTVSD_ENABLE": str(int(ptvsd))})
+        c.run(cmd, env=dict(UID_ENV, DOODBA_PTVSD_ENABLE=str(int(ptvsd))))
 
 
 @task(
@@ -165,6 +165,34 @@ def stop(c, purge=False):
         c.run(cmd)
 
 
+@task(
+    develop,
+    help={
+        "dbname": "The DB that will be DESTROYED and recreated. Default: 'devel'.",
+        "modules": "Comma-separated list of modules to install. Default: 'base'.",
+    },
+)
+def resetdb(c, modules="base", dbname="devel"):
+    """Reset the specified database with the specified modules.
+
+    Uses click-odoo-initdb behind the scenes, which has a caching system that
+    makes DB resets quicker. See its docs for more info.
+    """
+    with c.cd(str(PROJECT_ROOT)):
+        c.run("docker-compose stop odoo", pty=True)
+        c.run(
+            f"docker-compose run --rm odoo click-odoo-dropdb {dbname}",
+            env=UID_ENV,
+            warn=True,
+            pty=True,
+        )
+        c.run(
+            f"docker-compose run --rm odoo click-odoo-initdb -n {dbname} -m {modules}",
+            env=UID_ENV,
+            pty=True,
+        )
+
+
 @task(develop)
 def restart(c, quick=True):
     """Restart odoo container(s)."""
@@ -173,7 +201,7 @@ def restart(c, quick=True):
         cmd = f"{cmd} -t0"
     cmd = f"{cmd} odoo odoo_proxy"
     with c.cd(str(PROJECT_ROOT)):
-        c.run(cmd)
+        c.run(cmd, env=UID_ENV)
 
 
 @task(develop)
