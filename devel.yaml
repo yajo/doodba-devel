@@ -9,8 +9,8 @@ services:
       default:
       public:
     ports:
-      - "127.0.0.1:6899:6899"
-      - "127.0.0.1:${ODOO_MAJOR}069:8069"
+      - "127.0.0.1:12899:6899"
+      - "127.0.0.1:12069:8069"
     environment:
       PORT: "6899 8069"
       TARGET: odoo
@@ -39,6 +39,7 @@ services:
       PYTHONOPTIMIZE: ""
       PYTHONPATH: /opt/odoo/custom/src/odoo
       SMTP_PORT: "1025"
+      WDB_WEB_PORT: "12984"
       # To avoid installing demo data export DOODBA_WITHOUT_DEMO=all
       WITHOUT_DEMO: "${DOODBA_WITHOUT_DEMO-false}"
     volumes:
@@ -69,21 +70,31 @@ services:
       POSTGRES_DB: *dbname
       POSTGRES_PASSWORD: odoopassword
 
+  pgweb:
+    image: sosedoff/pgweb
+    networks: *public
+    ports:
+      - "127.0.0.1:12081:8081"
+    environment:
+      DATABASE_URL: postgres://odoo:odoopassword@db:5432/devel?sslmode=disable
+    depends_on:
+      - db
+
   smtp:
     extends:
       file: common.yaml
       service: smtpfake
     networks: *public
     ports:
-      - "127.0.0.1:8025:8025"
+      - "127.0.0.1:12025:8025"
 
   wdb:
     image: kozea/wdb
     networks: *public
     ports:
-      - "127.0.0.1:1984:1984"
+      - "127.0.0.1:12984:1984"
     # HACK https://github.com/Kozea/wdb/issues/136
-    stop_signal: KILL
+    init: true
 
   # Whitelist outgoing traffic for tests, reports, etc.
   cdnjs_cloudflare_proxy:
