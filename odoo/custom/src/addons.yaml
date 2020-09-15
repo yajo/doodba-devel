@@ -1,4 +1,5 @@
 account-invoice-reporting: ["*"]
+e-commerce: ["*"]
 l10n-spain: ["*"]
 partner-contact: ["*"]
 product-attribute: ["*"]
