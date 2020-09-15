@@ -13,11 +13,6 @@ from invoke import task
 
 PROJECT_ROOT = Path(__file__).parent.absolute()
 SRC_PATH = PROJECT_ROOT / "odoo" / "custom" / "src"
-DEVELOP_DEPENDENCIES = (
-    "copier",
-    "docker-compose",
-    "pre-commit",
-)
 UID_ENV = {"GID": str(os.getgid()), "UID": str(os.getuid()), "UMASK": "27"}
 
 
@@ -72,16 +67,6 @@ def write_code_workspace_file(c, cw_path=None):
 @task
 def develop(c):
     """Set up a basic development environment."""
-    # Install basic dependencies
-    for dep in DEVELOP_DEPENDENCIES:
-        try:
-            c.run(f"{dep} --version", hide=True)
-        except Exception:
-            try:
-                c.run("pipx --version")
-            except Exception:
-                c.run("python3 -m pip install --user pipx")
-            c.run(f"pipx install {dep}")
     # Prepare environment
     Path(PROJECT_ROOT, "odoo", "auto", "addons").mkdir(parents=True, exist_ok=True)
     with c.cd(str(PROJECT_ROOT)):
@@ -99,7 +84,8 @@ def git_aggregate(c):
     """
     with c.cd(str(PROJECT_ROOT)):
         c.run(
-            "docker-compose --file setup-devel.yaml run --rm odoo", env=UID_ENV,
+            "docker-compose --file setup-devel.yaml run --rm odoo",
+            env=UID_ENV,
         )
     write_code_workspace_file(c)
     for git_folder in iglob(str(SRC_PATH / "*" / ".git" / "..")):
@@ -146,7 +132,7 @@ def start(c, detach=True, ptvsd=False):
     if detach:
         cmd += " --detach"
     with c.cd(str(PROJECT_ROOT)):
-        c.run(cmd, env={"DOODBA_PTVSD_ENABLE": str(int(ptvsd))})
+        c.run(cmd, env=dict(UID_ENV, DOODBA_PTVSD_ENABLE=str(int(ptvsd))))
 
 
 @task(
@@ -164,6 +150,35 @@ def stop(c, purge=False):
         c.run(cmd)
 
 
+@task(
+    develop,
+    help={
+        "dbname": "The DB that will be DESTROYED and recreated. Default: 'devel'.",
+        "modules": "Comma-separated list of modules to install. Default: 'base'.",
+    },
+)
+def resetdb(c, modules="base", dbname="devel"):
+    """Reset the specified database with the specified modules.
+
+    Uses click-odoo-initdb behind the scenes, which has a caching system that
+    makes DB resets quicker. See its docs for more info.
+    """
+    with c.cd(str(PROJECT_ROOT)):
+        c.run("docker-compose stop odoo", pty=True)
+        _run = "docker-compose run --rm -l traefik.enable=false odoo"
+        c.run(
+            f"{_run} click-odoo-dropdb {dbname}",
+            env=UID_ENV,
+            warn=True,
+            pty=True,
+        )
+        c.run(
+            f"{_run} click-odoo-initdb -n {dbname} -m {modules}",
+            env=UID_ENV,
+            pty=True,
+        )
+
+
 @task(develop)
 def restart(c, quick=True):
     """Restart odoo container(s)."""
@@ -172,7 +187,7 @@ def restart(c, quick=True):
         cmd = f"{cmd} -t0"
     cmd = f"{cmd} odoo odoo_proxy"
     with c.cd(str(PROJECT_ROOT)):
-        c.run(cmd)
+        c.run(cmd, env=UID_ENV)
 
 
 @task(develop)

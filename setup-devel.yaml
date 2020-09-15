@@ -11,17 +11,19 @@ version: "2.4"
 
 services:
   odoo:
-    image: $ODOO_IMAGE:$ODOO_MINOR
+    image: docker.io/myuser/myproject-odoo:13.0
     build:
       context: ./odoo
       args:
         AGGREGATE: "false"
         DEPTH_DEFAULT: 100
-        ODOO_VERSION: $ODOO_MINOR
+        ODOO_VERSION: "13.0"
         PYTHONOPTIMIZE: ""
         PIP_INSTALL_ODOO: "false"
         CLEAN: "false"
         COMPILE: "false"
+        UID: "${UID:-1000}"
+        GID: "${GID:-1000}"
     networks:
       - public
     volumes:

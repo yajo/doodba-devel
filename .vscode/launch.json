@@ -13,7 +13,7 @@
           "remoteRoot": "/opt/odoo"
         }
       ],
-      "port": 6899,
+      "port": 13899,
       "host": "localhost"
     },
     {
@@ -26,7 +26,7 @@
           "remoteRoot": "/opt/odoo"
         }
       ],
-      "port": 6899,
+      "port": 13899,
       "host": "localhost"
     }
   ]
