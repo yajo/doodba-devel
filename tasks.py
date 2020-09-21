@@ -6,11 +6,13 @@ Contains common helpers to develop using this child project.
 """
 import json
 import os
-from glob import glob, iglob
+from itertools import chain
 from pathlib import Path
+from shutil import which
 
 from invoke import task
 
+ODOO_VERSION = 12.0
 PROJECT_ROOT = Path(__file__).parent.absolute()
 SRC_PATH = PROJECT_ROOT / "odoo" / "custom" / "src"
 UID_ENV = {"GID": str(os.getgid()), "UID": str(os.getuid()), "UMASK": "27"}
@@ -35,11 +37,13 @@ def write_code_workspace_file(c, cw_path=None):
     want it git-ignored by default.
     Example: `--cw-path doodba.my-custom-name.code-workspace`
     """
+    root_name = f"doodba.{PROJECT_ROOT.name}"
+    root_var = "${workspaceRoot:%s}" % root_name
     if not cw_path:
         try:
-            cw_path = next(iglob(str(PROJECT_ROOT / "doodba.*.code-workspace")))
+            cw_path = next(PROJECT_ROOT.glob("doodba.*.code-workspace"))
         except StopIteration:
-            cw_path = f"doodba.{PROJECT_ROOT.name}.code-workspace"
+            cw_path = f"{root_name}.code-workspace"
     if not Path(cw_path).is_absolute():
         cw_path = PROJECT_ROOT / cw_path
     cw_config = {}
@@ -48,17 +52,161 @@ def write_code_workspace_file(c, cw_path=None):
             cw_config = json.load(cw_fd)
     except (FileNotFoundError, json.decoder.JSONDecodeError):
         pass  # Nevermind, we start with a new config
+    # Launch configurations
+    ptvsd_configuration = {
+        "name": "Attach Python debugger to running container",
+        "type": "python",
+        "request": "attach",
+        "pathMappings": [{"localRoot": f"{root_var}/odoo", "remoteRoot": "/opt/odoo"}],
+        "port": int(ODOO_VERSION) * 1000 + 899,
+        "host": "localhost",
+    }
+    firefox_configuration = {
+        "type": "firefox",
+        "request": "launch",
+        "reAttach": True,
+        "name": "Connect to firefox debugger",
+        "url": f"http://localhost:{ODOO_VERSION:.0f}069/?debug=assets",
+        "reloadOnChange": {
+            "watch": f"{root_var}/odoo/custom/src/**/*.{'{js,css,scss,less}'}"
+        },
+        "skipFiles": ["**/lib/**"],
+        "pathMappings": [],
+    }
+    chrome_executable = which("chrome") or which("chromium")
+    chrome_configuration = {
+        "type": "chrome",
+        "request": "launch",
+        "name": "Connect to chrome debugger",
+        "url": f"http://localhost:{ODOO_VERSION:.0f}069/?debug=assets",
+        "skipFiles": ["**/lib/**"],
+        "trace": True,
+        "pathMapping": {},
+    }
+    if chrome_executable:
+        chrome_configuration["runtimeExecutable"] = chrome_executable
+    cw_config["launch"] = {
+        "compounds": [
+            {
+                "name": "Start Odoo and debug Python",
+                "configurations": ["Attach Python debugger to running container"],
+                "preLaunchTask": "Start Odoo in debug mode",
+            },
+            {
+                "name": "Start Odoo and debug JS in Firefox",
+                "configurations": ["Connect to firefox debugger"],
+                "preLaunchTask": "Start Odoo",
+            },
+            {
+                "name": "Start Odoo and debug JS in Chrome",
+                "configurations": ["Connect to chrome debugger"],
+                "preLaunchTask": "Start Odoo",
+            },
+            {
+                "name": "Start Odoo and debug Python + JS in Firefox",
+                "configurations": [
+                    "Attach Python debugger to running container",
+                    "Connect to firefox debugger",
+                ],
+                "preLaunchTask": "Start Odoo in debug mode",
+            },
+            {
+                "name": "Start Odoo and debug Python + JS in Chrome",
+                "configurations": [
+                    "Attach Python debugger to running container",
+                    "Connect to chrome debugger",
+                ],
+                "preLaunchTask": "Start Odoo in debug mode",
+            },
+        ],
+        "configurations": [
+            ptvsd_configuration,
+            firefox_configuration,
+            chrome_configuration,
+        ],
+    }
+    # Configure folders
     cw_config["folders"] = []
-    addon_repos = glob(str(SRC_PATH / "*" / ".git" / ".."))
-    for subrepo in sorted(addon_repos):
-        subrepo = Path(subrepo).resolve()
-        cw_config["folders"].append({"path": str(subrepo.relative_to(PROJECT_ROOT))})
+    for subrepo in SRC_PATH.glob("*"):
+        if not subrepo.is_dir():
+            continue
+        if (subrepo / ".git").exists():
+            cw_config["folders"].append(
+                {"path": str(subrepo.relative_to(PROJECT_ROOT))}
+            )
+        ptvsd_configuration["pathMappings"].append(
+            {
+                "localRoot": "${workspaceRoot:%s}" % subrepo.name,
+                "remoteRoot": f"/opt/odoo/custom/src/{subrepo.name}",
+            }
+        )
+        for addon in chain(subrepo.glob("*"), subrepo.glob("addons/*")):
+            if (addon / "__manifest__.py").is_file() or (
+                addon / "__openerp__.py"
+            ).is_file():
+                url = f"http://localhost:{ODOO_VERSION:.0f}069/{addon.name}/static/"
+                path = "${{workspaceRoot:{}}}/{}/static/".format(
+                    subrepo.name,
+                    addon.relative_to(subrepo),
+                )
+                firefox_configuration["pathMappings"].append({"url": url, "path": path})
+                chrome_configuration["pathMapping"][url] = path
+    cw_config["tasks"] = {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "Start Odoo",
+                "type": "process",
+                "command": "invoke",
+                "args": ["start", "--detach"],
+                "presentation": {
+                    "echo": True,
+                    "reveal": "silent",
+                    "focus": False,
+                    "panel": "shared",
+                    "showReuseMessage": True,
+                    "clear": False,
+                },
+                "problemMatcher": [],
+            },
+            {
+                "label": "Start Odoo in debug mode",
+                "type": "process",
+                "command": "invoke",
+                "args": ["start", "--detach", "--ptvsd"],
+                "presentation": {
+                    "echo": True,
+                    "reveal": "silent",
+                    "focus": False,
+                    "panel": "shared",
+                    "showReuseMessage": True,
+                    "clear": False,
+                },
+                "problemMatcher": [],
+            },
+            {
+                "label": "Stop Odoo",
+                "type": "process",
+                "command": "invoke",
+                "args": ["stop"],
+                "presentation": {
+                    "echo": True,
+                    "reveal": "silent",
+                    "focus": False,
+                    "panel": "shared",
+                    "showReuseMessage": True,
+                    "clear": False,
+                },
+                "problemMatcher": [],
+            },
+        ],
+    }
     # HACK https://github.com/microsoft/vscode/issues/95963 put private second to last
     private = SRC_PATH / "private"
     if private.is_dir():
         cw_config["folders"].append({"path": str(private.relative_to(PROJECT_ROOT))})
     # HACK https://github.com/microsoft/vscode/issues/37947 put top folder last
-    cw_config["folders"].append({"path": "."})
+    cw_config["folders"].append({"path": ".", "name": root_name})
     with open(cw_path, "w") as cw_fd:
         json.dump(cw_config, cw_fd, indent=2)
         cw_fd.write("\n")
@@ -88,13 +236,13 @@ def git_aggregate(c):
             env=UID_ENV,
         )
     write_code_workspace_file(c)
-    for git_folder in iglob(str(SRC_PATH / "*" / ".git" / "..")):
+    for git_folder in SRC_PATH.glob("*/.git/.."):
         action = (
             "install"
-            if Path(git_folder, ".pre-commit-config.yaml").is_file()
+            if (git_folder / ".pre-commit-config.yaml").is_file()
             else "uninstall"
         )
-        with c.cd(git_folder):
+        with c.cd(str(git_folder)):
             c.run(f"pre-commit {action}")
 
 
