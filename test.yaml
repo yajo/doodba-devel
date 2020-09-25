@@ -27,8 +27,8 @@ services:
       traefik.enable: "true"
       traefik.forbiddenCrawlers-0.frontend.headers.customResponseHeaders:
         "X-Robots-Tag:noindex, nofollow"
-      traefik.forbiddenCrawlers-0.frontend.rule: Host:test.example.com;Path:/{anything:(.*)?}
-      traefik.longpolling-0.frontend.rule: Host:test.example.com;Path:/longpolling/{anything:(.*)?}
+      traefik.forbiddenCrawlers-0.frontend.rule: Host:test.example.com;Path:/{anything:.*}
+      traefik.longpolling-0.frontend.rule: Host:test.example.com;Path:/longpolling/{anything:.*}
       traefik.longpolling-0.port: 8072
       traefik.http.services.doodba-devel-13-0-13-0-test-main.loadbalancer.server.port: 8069
       traefik.http.services.doodba-devel-13-0-13-0-test-longpolling.loadbalancer.server.port: 8072

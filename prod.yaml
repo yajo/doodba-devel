@@ -24,9 +24,9 @@ services:
       traefik.enable: "true"
       traefik.forbiddenCrawlers-0.frontend.headers.customResponseHeaders:
         "X-Robots-Tag:noindex, nofollow"
-      traefik.forbiddenCrawlers-0.frontend.rule: Host:www.example.com;Path:/web{anything:(/.*)?},/website/info{anything:(/.*)?}
+      traefik.forbiddenCrawlers-0.frontend.rule: Host:www.example.com;Path:/web{anything:/.*},/website/info{anything:/.*}
       traefik.main-0.frontend.rule: Host:www.example.com
-      traefik.longpolling-0.frontend.rule: Host:www.example.com;Path:/longpolling/{anything:(.*)?}
+      traefik.longpolling-0.frontend.rule: Host:www.example.com;Path:/longpolling/{anything:.*}
       traefik.longpolling-0.port: 8072
       traefik.alt-1.frontend.redirect.regex: ^(.*)://([^/]+)/(.*)$$
       traefik.alt-1.frontend.redirect.replacement: $$1://www.example.com/$$3
