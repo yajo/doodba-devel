@@ -24,7 +24,7 @@ services:
       traefik.port: "8069"
 
   db:
-    image: tecnativa/postgres-autoconf:12-alpine
+    image: ghcr.io/tecnativa/postgres-autoconf:12-alpine
     shm_size: 512mb
     environment:
       POSTGRES_DB: *dbname
