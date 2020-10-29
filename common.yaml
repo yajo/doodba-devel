@@ -26,13 +26,13 @@ services:
       traefik.port: "8069"
 
   db:
-    image: tecnativa/postgres-autoconf:10-alpine
+    image: ghcr.io/tecnativa/postgres-autoconf:10-alpine
     shm_size: 512mb
     environment:
       POSTGRES_DB: *dbname
       POSTGRES_USER: *dbuser
       CONF_EXTRA: |
-        work_mem = 32MB
+        work_mem = 512MB
     volumes:
       - db:/var/lib/postgresql/data:z
 

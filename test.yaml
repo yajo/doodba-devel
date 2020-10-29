@@ -25,6 +25,7 @@ services:
     labels:
       doodba.domain.main: "test.example.com"
       traefik.enable: "true"
+      traefik.domain: "test.example.com"
       traefik.forbiddenCrawlers-0.frontend.headers.customResponseHeaders:
         "X-Robots-Tag:noindex, nofollow"
       traefik.forbiddenCrawlers-0.frontend.rule: Host:test.example.com;Path:/{anything:.*}
