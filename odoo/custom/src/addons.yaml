@@ -1,6 +1,7 @@
 account-invoice-reporting: ["*"]
 credit-control: ["*"]
 e-commerce: ["*"]
+knowledge: ["*"]
 l10n-spain: ["*"]
 partner-contact: ["*"]
 product-attribute: ["*"]
