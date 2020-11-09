@@ -1,5 +1,5 @@
 # Changes here will be overwritten by Copier
-_commit: v2.3.0
+_commit: v2.5.0a0
 _src_path: https://github.com/Tecnativa/doodba-copier-template.git
 backup_deletion: false
 backup_dst: null
