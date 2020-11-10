@@ -16,11 +16,15 @@ from shutil import which
 from invoke import exceptions, task
 from invoke.util import yaml
 
-ODOO_VERSION = 12.0
 PROJECT_ROOT = Path(__file__).parent.absolute()
 SRC_PATH = PROJECT_ROOT / "odoo" / "custom" / "src"
 UID_ENV = {"GID": str(os.getgid()), "UID": str(os.getuid()), "UMASK": "27"}
 SERVICES_WAIT_TIME = int(os.environ.get("SERVICES_WAIT_TIME", 4))
+ODOO_VERSION = float(
+    yaml.safe_load((PROJECT_ROOT / "common.yaml").read_text())["services"]["odoo"][
+        "build"
+    ]["args"]["ODOO_VERSION"]
+)
 
 _logger = getLogger(__name__)
 
@@ -201,7 +205,7 @@ def write_code_workspace_file(c, cw_path=None):
                 addon / "__openerp__.py"
             ).is_file():
                 url = f"http://localhost:{ODOO_VERSION:.0f}069/{addon.name}/static/"
-                path = "${{workspaceRoot:{}}}/{}/static/".format(
+                path = "${workspaceRoot:%s}/%s/static/" % (
                     subrepo.name,
                     addon.relative_to(subrepo),
                 )
