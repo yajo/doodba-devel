@@ -11,13 +11,12 @@ version: "2.4"
 
 services:
   odoo:
-    image: docker.io/myuser/myproject-odoo:13.0
     build:
       context: ./odoo
       args:
         AGGREGATE: "false"
         DEPTH_DEFAULT: 100
-        ODOO_VERSION: "13.0"
+        ODOO_VERSION: "14.0"
         PYTHONOPTIMIZE: ""
         PIP_INSTALL_ODOO: "false"
         CLEAN: "false"

@@ -2,11 +2,10 @@ version: "2.4"
 
 services:
   odoo:
-    image: docker.io/myuser/myproject-odoo:13.0
     build:
       context: ./odoo
       args:
-        ODOO_VERSION: "13.0"
+        ODOO_VERSION: "14.0"
         UID: "${UID:-1000}"
         GID: "${GID:-1000}"
     environment:
@@ -26,7 +25,7 @@ services:
       traefik.port: "8069"
 
   db:
-    image: ghcr.io/tecnativa/postgres-autoconf:10-alpine
+    image: ghcr.io/tecnativa/postgres-autoconf:13-alpine
     shm_size: 512mb
     environment:
       POSTGRES_DB: *dbname
@@ -38,48 +37,3 @@ services:
 
   smtpfake:
     image: mailhog/mailhog
-
-  smtpreal:
-    image: tvial/docker-mailserver:latest
-    domainname: "example.com"
-    stop_grace_period: 1m
-    volumes:
-      - mailconfig:/tmp/docker-mailserver:z
-      - maildata:/var/mail:z
-      - maillogs:/var/log/mail:z
-      - maillogssupervisord:/var/log/supervisor:z
-      - mailstate:/var/mail-state:z
-    cap_add:
-      - SYS_PTRACE
-    environment:
-      DEFAULT_RELAY_HOST: "[smtp.example.com]:587"
-      DMS_DEBUG: 0
-      ENABLE_SRS: 1
-      ONE_DIR: 1
-      PERMIT_DOCKER: connected-networks
-      POSTFIX_INET_PROTOCOLS: ipv4
-      POSTFIX_MESSAGE_SIZE_LIMIT: 52428800 # 50 MiB
-      RELAY_HOST: "smtp.example.com"
-      RELAY_PORT: "587"
-      RELAY_USER: "postmaster@example.com"
-      SMTP_ONLY: 1
-      SRS_DOMAINNAME: "example.com"
-      SRS_EXCLUDE_DOMAINS: "example.com"
-      SRS_SENDER_CLASSES: envelope_sender,header_sender
-
-  backup:
-    image: tecnativa/duplicity:postgres-s3
-    hostname: backup
-    domainname: www.example.com
-    init: true
-    environment:
-      DST: "s3://s3.amazonaws.com/example-bkp"
-      EMAIL_FROM: "backup@example.com"
-      EMAIL_TO: "alerts@example.com"
-      PGDATABASE: *dbname
-      PGUSER: *dbuser
-      SMTP_HOST: smtplocal
-      TZ: "UTC"
-    volumes:
-      - backup_cache:/root:z
-      - filestore:/mnt/backup/src/odoo:z

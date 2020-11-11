@@ -9,8 +9,8 @@ services:
       default:
       public:
     ports:
-      - "127.0.0.1:13899:6899"
-      - "127.0.0.1:13069:8069"
+      - "127.0.0.1:14899:6899"
+      - "127.0.0.1:14069:8069"
     environment:
       PORT: "6899 8069"
       TARGET: odoo
@@ -39,19 +39,20 @@ services:
       PYTHONOPTIMIZE: ""
       PYTHONPATH: /opt/odoo/custom/src/odoo
       SMTP_PORT: "1025"
-      WDB_WEB_PORT: "13984"
+      WDB_WEB_PORT: "14984"
       # To avoid installing demo data export DOODBA_WITHOUT_DEMO=all
       WITHOUT_DEMO: "${DOODBA_WITHOUT_DEMO-false}"
     volumes:
       - ./odoo/custom:/opt/odoo/custom:ro,z
       - ./odoo/auto:/opt/odoo/auto:rw,z
     depends_on:
-      - cdnjs_cloudflare_proxy
       - db
-      - fonts_googleapis_proxy
-      - fonts_gstatic_proxy
-      - google_proxy
-      - gravatar_proxy
+      - proxy_cdnjs_cloudflare_com
+      - proxy_fonts_googleapis_com
+      - proxy_fonts_gstatic_com
+      - proxy_www_google_com
+      - proxy_www_googleapis_com
+      - proxy_www_gravatar_com
       - smtp
       - wdb
     command:
@@ -74,7 +75,7 @@ services:
     image: sosedoff/pgweb
     networks: *public
     ports:
-      - "127.0.0.1:13081:8081"
+      - "127.0.0.1:14081:8081"
     environment:
       DATABASE_URL: postgres://odoo:odoopassword@db:5432/devel?sslmode=disable
     depends_on:
@@ -86,18 +87,18 @@ services:
       service: smtpfake
     networks: *public
     ports:
-      - "127.0.0.1:13025:8025"
+      - "127.0.0.1:14025:8025"
 
   wdb:
     image: kozea/wdb
     networks: *public
     ports:
-      - "127.0.0.1:13984:1984"
+      - "127.0.0.1:14984:1984"
     # HACK https://github.com/Kozea/wdb/issues/136
     init: true
 
   # Whitelist outgoing traffic for tests, reports, etc.
-  cdnjs_cloudflare_proxy:
+  proxy_cdnjs_cloudflare_com:
     image: tecnativa/whitelist
     networks:
       default:
@@ -108,7 +109,7 @@ services:
       TARGET: cdnjs.cloudflare.com
       PRE_RESOLVE: 1
 
-  fonts_googleapis_proxy:
+  proxy_fonts_googleapis_com:
     image: tecnativa/whitelist
     networks:
       default:
@@ -119,7 +120,7 @@ services:
       TARGET: fonts.googleapis.com
       PRE_RESOLVE: 1
 
-  fonts_gstatic_proxy:
+  proxy_fonts_gstatic_com:
     image: tecnativa/whitelist
     networks:
       default:
@@ -130,7 +131,7 @@ services:
       TARGET: fonts.gstatic.com
       PRE_RESOLVE: 1
 
-  google_proxy:
+  proxy_www_google_com:
     image: tecnativa/whitelist
     networks:
       default:
@@ -141,7 +142,18 @@ services:
       TARGET: www.google.com
       PRE_RESOLVE: 1
 
-  gravatar_proxy:
+  proxy_www_googleapis_com:
+    image: tecnativa/whitelist
+    networks:
+      default:
+        aliases:
+          - www.googleapis.com
+      public:
+    environment:
+      TARGET: www.googleapis.com
+      PRE_RESOLVE: 1
+
+  proxy_www_gravatar_com:
     image: tecnativa/whitelist
     networks:
       default:
