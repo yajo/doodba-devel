@@ -106,6 +106,9 @@ def write_code_workspace_file(c, cw_path=None):
             cw_config = json.load(cw_fd)
     except (FileNotFoundError, json.decoder.JSONDecodeError):
         pass  # Nevermind, we start with a new config
+    # Static settings
+    cw_config.setdefault("settings", {})
+    cw_config["settings"].update({"search.followSymlinks": False})
     # Launch configurations
     debugpy_configuration = {
         "name": "Attach Python debugger to running container",
@@ -228,9 +231,7 @@ def write_code_workspace_file(c, cw_path=None):
                     "clear": False,
                 },
                 "problemMatcher": [],
-                "options": {
-                    "statusbar": {"label": "$(play-circle)", "color": "#065535"}
-                },
+                "options": {"statusbar": {"label": "$(play-circle) Start Odoo"}},
             },
             {
                 "label": "Run Odoo Tests for current module",
@@ -299,9 +300,7 @@ def write_code_workspace_file(c, cw_path=None):
                     "clear": False,
                 },
                 "problemMatcher": [],
-                "options": {
-                    "statusbar": {"label": "$(stop-circle)", "color": "#9A0000"}
-                },
+                "options": {"statusbar": {"label": "$(stop-circle) Stop Odoo"}},
             },
         ],
     }
@@ -428,7 +427,7 @@ def install(c, modules=None, core=False, extra=False, private=False):
         cur_module = _get_cwd_addon(Path.cwd())
         if not cur_module:
             raise exceptions.ParseError(
-                message="You must provide at least one option for modules"
+                msg="You must provide at least one option for modules"
                 " or be in a subdirectory of one."
                 " See --help for details."
             )
@@ -474,7 +473,7 @@ def test(c, modules=None, debugpy=False, cur_file=None, mode="init"):
         cur_module = _get_cwd_addon(cur_file or Path.cwd())
         if not cur_module:
             raise exceptions.ParseError(
-                message="You must provide at least one option for modules/file. "
+                msg="You must provide at least one option for modules/file. "
                 "See --help for details."
             )
         else:
@@ -493,8 +492,7 @@ def test(c, modules=None, debugpy=False, cur_file=None, mode="init"):
             odoo_command.append("-u")
         else:
             raise exceptions.ParseError(
-                message="Available modes are 'init' or 'update'."
-                " See --help for details."
+                msg="Available modes are 'init' or 'update'." " See --help for details."
             )
         odoo_command.append(modules)
         _override_docker_command(
