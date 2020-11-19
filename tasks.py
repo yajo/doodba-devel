@@ -155,32 +155,6 @@ def write_code_workspace_file(c, cw_path=None):
                 "preLaunchTask": "Run Odoo Tests in debug mode for current module",
                 "internalConsoleOptions": "openOnSessionStart",
             },
-            {
-                "name": "Start Odoo and debug JS in Firefox",
-                "configurations": ["Connect to firefox debugger"],
-                "preLaunchTask": "Start Odoo",
-            },
-            {
-                "name": "Start Odoo and debug JS in Chrome",
-                "configurations": ["Connect to chrome debugger"],
-                "preLaunchTask": "Start Odoo",
-            },
-            {
-                "name": "Start Odoo and debug Python + JS in Firefox",
-                "configurations": [
-                    "Attach Python debugger to running container",
-                    "Connect to firefox debugger",
-                ],
-                "preLaunchTask": "Start Odoo in debug mode",
-            },
-            {
-                "name": "Start Odoo and debug Python + JS in Chrome",
-                "configurations": [
-                    "Attach Python debugger to running container",
-                    "Connect to chrome debugger",
-                ],
-                "preLaunchTask": "Start Odoo in debug mode",
-            },
         ],
         "configurations": [
             debugpy_configuration,
@@ -315,6 +289,22 @@ def write_code_workspace_file(c, cw_path=None):
                 "problemMatcher": [],
                 "options": {"statusbar": {"label": "$(stop-circle) Stop Odoo"}},
             },
+            {
+                "label": "Restart Odoo",
+                "type": "process",
+                "command": "invoke",
+                "args": ["restart"],
+                "presentation": {
+                    "echo": True,
+                    "reveal": "silent",
+                    "focus": False,
+                    "panel": "shared",
+                    "showReuseMessage": True,
+                    "clear": False,
+                },
+                "problemMatcher": [],
+                "options": {"statusbar": {"label": "$(history) Restart Odoo"}},
+            },
         ],
     }
     # Sort project folders
@@ -416,7 +406,16 @@ def start(c, detach=True, debugpy=False):
         if detach:
             cmd += " --detach"
         with c.cd(str(PROJECT_ROOT)):
-            c.run(cmd, env=dict(UID_ENV, DOODBA_DEBUGPY_ENABLE=str(int(debugpy))))
+            result = c.run(
+                cmd,
+                pty=True,
+                env=dict(
+                    UID_ENV,
+                    DOODBA_DEBUGPY_ENABLE=str(int(debugpy)),
+                ),
+            )
+            if not ("Recreating" in result.stdout or "Starting" in result.stdout):
+                restart(c)
         _logger.info("Waiting for services to spin up...")
         time.sleep(SERVICES_WAIT_TIME)
 
@@ -597,13 +596,22 @@ def restart(c, quick=True):
         c.run(cmd, env=UID_ENV)
 
 
-@task(develop)
-def logs(c, tail=10, follow=True):
+@task(
+    develop,
+    help={
+        "container": "Names of the containers from which logs will be obtained."
+        " You can specify a single one, or several comma-separated names."
+        " Default: None (show logs for all containers)"
+    },
+)
+def logs(c, tail=10, follow=True, container=None):
     """Obtain last logs of current environment."""
     cmd = "docker-compose logs"
     if follow:
         cmd += " -f"
     if tail:
         cmd += f" --tail {tail}"
+    if container:
+        cmd += f" {container.replace(',', ' ')}"
     with c.cd(str(PROJECT_ROOT)):
         c.run(cmd)
