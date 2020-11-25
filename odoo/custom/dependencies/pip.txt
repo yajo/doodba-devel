@@ -3,4 +3,5 @@ oca.decorators
 ptpython
 
 -r https://raw.githubusercontent.com/OCA/community-data-files/12.0/requirements.txt
+-r https://raw.githubusercontent.com/OCA/l10n-spain/12.0/requirements.txt
 -r https://raw.githubusercontent.com/OCA/server-auth/12.0/requirements.txt
