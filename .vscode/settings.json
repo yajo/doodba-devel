@@ -12,7 +12,6 @@
   ],
   "python.linting.pylintEnabled": true,
   "restructuredtext.confPath": "",
-  "search.followSymlinks": false,
   "search.useIgnoreFiles": false,
 
   // Language-specific configurations
@@ -30,5 +29,8 @@
   },
   "[yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[xml]": {
+    "editor.formatOnSave": false
   }
 }

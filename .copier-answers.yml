@@ -1,5 +1,5 @@
 # Changes here will be overwritten by Copier
-_commit: v1.5.4
+_commit: 2.5.0
 _src_path: https://github.com/Tecnativa/doodba-copier-template.git
 backup_deletion: false
 backup_dst: s3://s3.amazonaws.com/example-bkp
@@ -7,17 +7,25 @@ backup_email_from: backup@example.com
 backup_email_to: alerts@example.com
 backup_tz: UTC
 cidr_whitelist: null
-domain_prod: www.example.com
-domain_prod_alternatives:
-  - example.com
-domain_test: test.example.com
+domains_prod:
+  - cert_resolver: letsencrypt
+    hosts:
+      - www.example.com
+  - cert_resolver: letsencrypt
+    hosts:
+      - example.com
+    redirect_to: www.example.com
+domains_test:
+  - cert_resolver: letsencrypt
+    hosts:
+      - test.example.com
 gitlab_url: https://gitlab.com/example/doodba-devel-master
 odoo_dbfilter: .*
 odoo_initial_lang: ""
 odoo_listdb: true
 odoo_oci_image: docker.io/myuser/myproject-odoo
 odoo_proxy: traefik
-odoo_version: 13.0
+odoo_version: 14.0
 paths_without_crawlers:
   - /web
   - /website/info
