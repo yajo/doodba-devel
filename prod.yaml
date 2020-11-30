@@ -25,7 +25,7 @@ services:
       traefik.domain: "www.example.com"
       traefik.forbiddenCrawlers-0.frontend.headers.customResponseHeaders:
         "X-Robots-Tag:noindex, nofollow"
-      traefik.forbiddenCrawlers-0.frontend.rule: Host:www.example.com;Path:/web{anything:/.*},/website/info{anything:/.*}
+      traefik.forbiddenCrawlers-0.frontend.rule: Host:www.example.com;Path:/web,/web/{anything:.*},/website/info,/website/info/{anything:.*}
       traefik.main-0.frontend.rule: Host:www.example.com
       traefik.longpolling-0.frontend.rule: Host:www.example.com;Path:/longpolling/{anything:.*}
       traefik.longpolling-0.port: 8072

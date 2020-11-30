@@ -92,7 +92,7 @@ def write_code_workspace_file(c, cw_path=None):
     Example: `--cw-path doodba.my-custom-name.code-workspace`
     """
     root_name = f"doodba.{PROJECT_ROOT.name}"
-    root_var = "${workspaceRoot:%s}" % root_name
+    root_var = "${workspaceFolder:%s}" % root_name
     if not cw_path:
         try:
             cw_path = next(PROJECT_ROOT.glob("doodba.*.code-workspace"))
@@ -114,9 +114,10 @@ def write_code_workspace_file(c, cw_path=None):
         "name": "Attach Python debugger to running container",
         "type": "python",
         "request": "attach",
-        "pathMappings": [{"localRoot": f"{root_var}/odoo", "remoteRoot": "/opt/odoo"}],
+        "pathMappings": [],
         "port": int(ODOO_VERSION) * 1000 + 899,
-        "host": "localhost",
+        # HACK https://github.com/microsoft/vscode-python/issues/14820
+        "host": "0.0.0.0",
     }
     firefox_configuration = {
         "type": "firefox",
@@ -150,36 +151,10 @@ def write_code_workspace_file(c, cw_path=None):
                 "preLaunchTask": "Start Odoo in debug mode",
             },
             {
-                "name": "Run and debug Odoo tests",
+                "name": "Test and debug current module",
                 "configurations": ["Attach Python debugger to running container"],
                 "preLaunchTask": "Run Odoo Tests in debug mode for current module",
                 "internalConsoleOptions": "openOnSessionStart",
-            },
-            {
-                "name": "Start Odoo and debug JS in Firefox",
-                "configurations": ["Connect to firefox debugger"],
-                "preLaunchTask": "Start Odoo",
-            },
-            {
-                "name": "Start Odoo and debug JS in Chrome",
-                "configurations": ["Connect to chrome debugger"],
-                "preLaunchTask": "Start Odoo",
-            },
-            {
-                "name": "Start Odoo and debug Python + JS in Firefox",
-                "configurations": [
-                    "Attach Python debugger to running container",
-                    "Connect to firefox debugger",
-                ],
-                "preLaunchTask": "Start Odoo in debug mode",
-            },
-            {
-                "name": "Start Odoo and debug Python + JS in Chrome",
-                "configurations": [
-                    "Attach Python debugger to running container",
-                    "Connect to chrome debugger",
-                ],
-                "preLaunchTask": "Start Odoo in debug mode",
             },
         ],
         "configurations": [
@@ -188,7 +163,13 @@ def write_code_workspace_file(c, cw_path=None):
             chrome_configuration,
         ],
     }
-    # Configure folders
+    # Configure folders and debuggers
+    debugpy_configuration["pathMappings"].append(
+        {
+            "localRoot": "${workspaceFolder:odoo}/",
+            "remoteRoot": "/opt/odoo/custom/src/odoo",
+        }
+    )
     cw_config["folders"] = []
     for subrepo in SRC_PATH.glob("*"):
         if not subrepo.is_dir():
@@ -197,18 +178,25 @@ def write_code_workspace_file(c, cw_path=None):
             cw_config["folders"].append(
                 {"path": str(subrepo.relative_to(PROJECT_ROOT))}
             )
-        debugpy_configuration["pathMappings"].append(
-            {
-                "localRoot": "${workspaceRoot:%s}" % subrepo.name,
-                "remoteRoot": f"/opt/odoo/custom/src/{subrepo.name}",
-            }
-        )
         for addon in chain(subrepo.glob("*"), subrepo.glob("addons/*")):
             if (addon / "__manifest__.py").is_file() or (
                 addon / "__openerp__.py"
             ).is_file():
+                if subrepo.name == "odoo":
+                    local_path = "${workspaceFolder:%s}/addons/%s/" % (
+                        subrepo.name,
+                        addon.name,
+                    )
+                else:
+                    local_path = "${workspaceFolder:%s}/%s" % (subrepo.name, addon.name)
+                debugpy_configuration["pathMappings"].append(
+                    {
+                        "localRoot": local_path,
+                        "remoteRoot": f"/opt/odoo/auto/addons/{addon.name}/",
+                    }
+                )
                 url = f"http://localhost:{ODOO_VERSION:.0f}069/{addon.name}/static/"
-                path = "${workspaceRoot:%s}/%s/static/" % (
+                path = "${workspaceFolder:%s}/%s/static/" % (
                     subrepo.name,
                     addon.relative_to(subrepo),
                 )
@@ -247,7 +235,7 @@ def write_code_workspace_file(c, cw_path=None):
                     "clear": False,
                 },
                 "problemMatcher": [],
-                "options": {"statusbar": {"hide": True}},
+                "options": {"statusbar": {"label": "$(beaker) Test module"}},
             },
             {
                 "label": "Run Odoo Tests in debug mode for current module",
@@ -302,11 +290,27 @@ def write_code_workspace_file(c, cw_path=None):
                 "problemMatcher": [],
                 "options": {"statusbar": {"label": "$(stop-circle) Stop Odoo"}},
             },
+            {
+                "label": "Restart Odoo",
+                "type": "process",
+                "command": "invoke",
+                "args": ["restart"],
+                "presentation": {
+                    "echo": True,
+                    "reveal": "silent",
+                    "focus": False,
+                    "panel": "shared",
+                    "showReuseMessage": True,
+                    "clear": False,
+                },
+                "problemMatcher": [],
+                "options": {"statusbar": {"label": "$(history) Restart Odoo"}},
+            },
         ],
     }
     # Sort project folders
     cw_config["folders"].sort(key=lambda x: x["path"])
-    # Put Odoo folder just before private and top folder
+    # Put Odoo folder just before private and top folder and map to debugpy
     odoo = SRC_PATH / "odoo"
     if odoo.is_dir():
         cw_config["folders"].append({"path": str(odoo.relative_to(PROJECT_ROOT))})
@@ -403,7 +407,16 @@ def start(c, detach=True, debugpy=False):
         if detach:
             cmd += " --detach"
         with c.cd(str(PROJECT_ROOT)):
-            c.run(cmd, env=dict(UID_ENV, DOODBA_DEBUGPY_ENABLE=str(int(debugpy))))
+            result = c.run(
+                cmd,
+                pty=True,
+                env=dict(
+                    UID_ENV,
+                    DOODBA_DEBUGPY_ENABLE=str(int(debugpy)),
+                ),
+            )
+            if not ("Recreating" in result.stdout or "Starting" in result.stdout):
+                restart(c)
         _logger.info("Waiting for services to spin up...")
         time.sleep(SERVICES_WAIT_TIME)
 
@@ -427,7 +440,8 @@ def install(c, modules=None, core=False, extra=False, private=False):
         cur_module = _get_cwd_addon(Path.cwd())
         if not cur_module:
             raise exceptions.ParseError(
-                msg="You must provide at least one option for modules"
+                msg="Odoo addon to install not found. "
+                "You must provide at least one option for modules"
                 " or be in a subdirectory of one."
                 " See --help for details."
             )
@@ -444,10 +458,35 @@ def install(c, modules=None, core=False, extra=False, private=False):
     with c.cd(str(PROJECT_ROOT)):
         c.run(
             cmd,
-            env=dict(
-                UID_ENV,
-            ),
+            env=UID_ENV,
+            pty=True,
         )
+
+
+def _test_in_debug_mode(c, odoo_command):
+    with tempfile.NamedTemporaryFile(
+        mode="w", suffix=".yaml"
+    ) as tmp_docker_compose_file:
+        cmd = (
+            "docker-compose -f docker-compose.yml "
+            f"-f {tmp_docker_compose_file.name} up -d"
+        )
+        _override_docker_command(
+            "odoo",
+            odoo_command,
+            file=tmp_docker_compose_file,
+            orig_file=Path(str(PROJECT_ROOT), "docker-compose.yml"),
+        )
+        with c.cd(str(PROJECT_ROOT)):
+            c.run(
+                cmd,
+                env=dict(
+                    UID_ENV,
+                    DOODBA_DEBUGPY_ENABLE="1",
+                ),
+            )
+        _logger.info("Waiting for services to spin up...")
+        time.sleep(SERVICES_WAIT_TIME)
 
 
 @task(
@@ -473,44 +512,34 @@ def test(c, modules=None, debugpy=False, cur_file=None, mode="init"):
         cur_module = _get_cwd_addon(cur_file or Path.cwd())
         if not cur_module:
             raise exceptions.ParseError(
-                msg="You must provide at least one option for modules/file. "
+                msg="Odoo addon to test not found. "
+                "You must provide at least one option for modules/file "
+                "or be in a subdirectory of one. "
                 "See --help for details."
             )
         else:
             modules = cur_module
-    with tempfile.NamedTemporaryFile(
-        mode="w", suffix=".yaml"
-    ) as tmp_docker_compose_file:
-        cmd = (
-            "docker-compose -f docker-compose.yml "
-            f"-f {tmp_docker_compose_file.name} up -d"
+    odoo_command = ["odoo", "--test-enable", "--stop-after-init", "--workers=0"]
+    if mode == "init":
+        odoo_command.append("-i")
+    elif mode == "update":
+        odoo_command.append("-u")
+    else:
+        raise exceptions.ParseError(
+            msg="Available modes are 'init' or 'update'. See --help for details."
         )
-        odoo_command = ["odoo", "--test-enable", "--stop-after-init", "--workers=0"]
-        if mode == "init":
-            odoo_command.append("-i")
-        elif mode == "update":
-            odoo_command.append("-u")
-        else:
-            raise exceptions.ParseError(
-                msg="Available modes are 'init' or 'update'." " See --help for details."
-            )
-        odoo_command.append(modules)
-        _override_docker_command(
-            "odoo",
-            odoo_command,
-            file=tmp_docker_compose_file,
-            orig_file=Path(str(PROJECT_ROOT), "docker-compose.yml"),
-        )
+    odoo_command.append(modules)
+    if debugpy:
+        _test_in_debug_mode(c, odoo_command)
+    else:
+        cmd = ["docker-compose", "run", "--rm", "odoo"]
+        cmd.extend(odoo_command)
         with c.cd(str(PROJECT_ROOT)):
             c.run(
-                cmd,
-                env=dict(
-                    UID_ENV,
-                    DOODBA_DEBUGPY_ENABLE=str(int(debugpy)),
-                ),
+                " ".join(cmd),
+                env=UID_ENV,
+                pty=True,
             )
-        _logger.info("Waiting for services to spin up...")
-        time.sleep(SERVICES_WAIT_TIME)
 
 
 @task(
@@ -568,13 +597,22 @@ def restart(c, quick=True):
         c.run(cmd, env=UID_ENV)
 
 
-@task(develop)
-def logs(c, tail=10, follow=True):
+@task(
+    develop,
+    help={
+        "container": "Names of the containers from which logs will be obtained."
+        " You can specify a single one, or several comma-separated names."
+        " Default: None (show logs for all containers)"
+    },
+)
+def logs(c, tail=10, follow=True, container=None):
     """Obtain last logs of current environment."""
     cmd = "docker-compose logs"
     if follow:
         cmd += " -f"
     if tail:
         cmd += f" --tail {tail}"
+    if container:
+        cmd += f" {container.replace(',', ' ')}"
     with c.cd(str(PROJECT_ROOT)):
         c.run(cmd)
