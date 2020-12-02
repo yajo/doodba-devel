@@ -34,8 +34,6 @@ services:
       DOODBA_ENVIRONMENT: "${DOODBA_ENVIRONMENT-devel}"
       LIST_DB: "true"
       DEBUGPY_ENABLE: "${DOODBA_DEBUGPY_ENABLE:-0}"
-      DEBUGPY_ARGS:
-        "--listen 0.0.0.0:6899 --wait-for-client --log-to /opt/odoo/auto/debugpy"
       PGDATABASE: &dbname devel
       PYTHONDONTWRITEBYTECODE: 1
       PYTHONOPTIMIZE: ""
