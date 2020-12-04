@@ -1,4 +1,5 @@
 account-invoice-reporting: ["*"]
+commission: ["*"]
 credit-control: ["*"]
 e-commerce: ["*"]
 knowledge: ["*"]
