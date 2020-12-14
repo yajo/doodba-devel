@@ -1,6 +1,7 @@
 account-invoice-reporting: ["*"]
 commission: ["*"]
 credit-control: ["*"]
+data-protection: ["*"]
 e-commerce: ["*"]
 knowledge: ["*"]
 l10n-spain: ["*"]
