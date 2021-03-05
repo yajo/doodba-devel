@@ -1,5 +1,5 @@
-# Changes here will be overwritten by Copier
-_commit: v2.5.2
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: v2.7.1
 _src_path: https://github.com/Tecnativa/doodba-copier-template.git
 backup_deletion: false
 backup_dst: null
@@ -21,7 +21,7 @@ paths_without_crawlers:
   - /website/info
 postgres_dbname: prod
 postgres_username: odoo
-postgres_version: 12
+postgres_version: 13
 project_author: Jairo Llopis
 project_license: BSL-1.0
 project_name: doodba-devel-12
