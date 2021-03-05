@@ -1,4 +1,6 @@
 https://github.com/OCA/openupgradelib/archive/master.zip
+freezegun
+icecream
 oca.decorators
 ptpython
 
