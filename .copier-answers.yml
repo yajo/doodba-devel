@@ -1,10 +1,11 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
-_commit: v2.7.1
+_commit: v2.8.0a2
 _src_path: https://github.com/Tecnativa/doodba-copier-template.git
 backup_deletion: false
 backup_dst: null
 backup_email_from: null
 backup_email_to: null
+backup_image_version: latest
 backup_tz: UTC
 cidr_whitelist: null
 domains_prod: []
@@ -31,3 +32,4 @@ smtp_default_from: null
 smtp_relay_host: null
 smtp_relay_port: 587
 smtp_relay_user: null
+smtp_relay_version: "9.0"

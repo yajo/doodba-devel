@@ -2,4 +2,3 @@
 custom/src/*
 !custom/src/private
 !custom/src/*.*
-auto
