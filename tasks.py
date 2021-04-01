@@ -245,6 +245,24 @@ def write_code_workspace_file(c, cw_path=None):
                 "options": {"statusbar": {"label": "$(play-circle) Start Odoo"}},
             },
             {
+                "label": "Install current module",
+                "type": "process",
+                "command": "invoke",
+                "args": ["install", "--cur-file", "${file}", "restart"],
+                "presentation": {
+                    "echo": True,
+                    "reveal": "always",
+                    "focus": True,
+                    "panel": "shared",
+                    "showReuseMessage": True,
+                    "clear": False,
+                },
+                "problemMatcher": [],
+                "options": {
+                    "statusbar": {"label": "$(symbol-property) Install module"}
+                },
+            },
+            {
                 "label": "Run Odoo Tests for current module",
                 "type": "process",
                 "command": "invoke",
@@ -329,6 +347,24 @@ def write_code_workspace_file(c, cw_path=None):
                 "problemMatcher": [],
                 "options": {"statusbar": {"label": "$(history) Restart Odoo"}},
             },
+            {
+                "label": "See container logs",
+                "type": "process",
+                "command": "invoke",
+                "args": ["logs"],
+                "presentation": {
+                    "echo": True,
+                    "reveal": "always",
+                    "focus": False,
+                    "panel": "shared",
+                    "showReuseMessage": True,
+                    "clear": False,
+                },
+                "problemMatcher": [],
+                "options": {
+                    "statusbar": {"label": "$(list-selection) See container logs"}
+                },
+            },
         ],
     }
     # Sort project folders
@@ -370,6 +406,7 @@ def git_aggregate(c):
         c.run(
             "docker-compose --file setup-devel.yaml run --rm odoo",
             env=UID_ENV,
+            pty=True,
         )
     write_code_workspace_file(c)
     for git_folder in SRC_PATH.glob("*/.git/.."):
@@ -389,14 +426,14 @@ def img_build(c, pull=True):
     if pull:
         cmd += " --pull"
     with c.cd(str(PROJECT_ROOT)):
-        c.run(cmd, env=UID_ENV)
+        c.run(cmd, env=UID_ENV, pty=True)
 
 
 @task(develop)
 def img_pull(c):
     """Pull docker images."""
     with c.cd(str(PROJECT_ROOT)):
-        c.run("docker-compose pull")
+        c.run("docker-compose pull", pty=True)
 
 
 @task(develop)
@@ -438,7 +475,11 @@ def start(c, detach=True, debugpy=False):
                     DOODBA_DEBUGPY_ENABLE=str(int(debugpy)),
                 ),
             )
-            if not ("Recreating" in result.stdout or "Starting" in result.stdout):
+            if not (
+                "Recreating" in result.stdout
+                or "Starting" in result.stdout
+                or "Creating" in result.stdout
+            ):
                 restart(c)
         _logger.info("Waiting for services to spin up...")
         time.sleep(SERVICES_WAIT_TIME)
@@ -451,16 +492,18 @@ def start(c, detach=True, debugpy=False):
         "core": "Install all core addons. Default: False",
         "extra": "Install all extra addons. Default: False",
         "private": "Install all private addons. Default: False",
+        "cur-file": "Path to the current file."
+        " Addon name will be obtained from there to install.",
     },
 )
-def install(c, modules=None, core=False, extra=False, private=False):
+def install(c, modules=None, cur_file=None, core=False, extra=False, private=False):
     """Install Odoo addons
 
     By default, installs addon from directory being worked on,
     unless other options are specified.
     """
     if not (modules or core or extra or private):
-        cur_module = _get_cwd_addon(Path.cwd())
+        cur_module = _get_cwd_addon(cur_file or Path.cwd())
         if not cur_module:
             raise exceptions.ParseError(
                 msg="Odoo addon to install not found. "
@@ -507,6 +550,7 @@ def _test_in_debug_mode(c, odoo_command):
                     UID_ENV,
                     DOODBA_DEBUGPY_ENABLE="1",
                 ),
+                pty=True,
             )
         _logger.info("Waiting for services to spin up...")
         time.sleep(SERVICES_WAIT_TIME)
@@ -577,7 +621,7 @@ def stop(c, purge=False):
     else:
         cmd += " stop"
     with c.cd(str(PROJECT_ROOT)):
-        c.run(cmd)
+        c.run(cmd, pty=True)
 
 
 @task(
@@ -617,7 +661,7 @@ def restart(c, quick=True):
         cmd = f"{cmd} -t0"
     cmd = f"{cmd} odoo odoo_proxy"
     with c.cd(str(PROJECT_ROOT)):
-        c.run(cmd, env=UID_ENV)
+        c.run(cmd, env=UID_ENV, pty=True)
 
 
 @task(
@@ -638,4 +682,4 @@ def logs(c, tail=10, follow=True, container=None):
     if container:
         cmd += f" {container.replace(',', ' ')}"
     with c.cd(str(PROJECT_ROOT)):
-        c.run(cmd)
+        c.run(cmd, pty=True)

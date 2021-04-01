@@ -40,7 +40,7 @@ services:
     image: mailhog/mailhog
 
   smtpreal:
-    image: tvial/docker-mailserver:latest
+    image: ghcr.io/docker-mailserver/docker-mailserver:9.0
     domainname: "example.com"
     stop_grace_period: 1m
     volumes:
@@ -68,7 +68,7 @@ services:
       SRS_SENDER_CLASSES: envelope_sender,header_sender
 
   backup:
-    image: tecnativa/duplicity:postgres-s3
+    image: ghcr.io/tecnativa/docker-duplicity-postgres-s3:latest
     hostname: backup
     domainname: www.example.com
     init: true
