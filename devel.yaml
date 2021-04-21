@@ -2,7 +2,7 @@ version: "2.4"
 
 services:
   odoo_proxy:
-    image: tecnativa/whitelist
+    image: ghcr.io/tecnativa/docker-whitelist:latest
     depends_on:
       - odoo
     networks: &public
@@ -99,7 +99,7 @@ services:
 
   # Whitelist outgoing traffic for tests, reports, etc.
   proxy_cdnjs_cloudflare_com:
-    image: tecnativa/whitelist
+    image: ghcr.io/tecnativa/docker-whitelist:latest
     networks:
       default:
         aliases:
@@ -110,7 +110,7 @@ services:
       PRE_RESOLVE: 1
 
   proxy_fonts_googleapis_com:
-    image: tecnativa/whitelist
+    image: ghcr.io/tecnativa/docker-whitelist:latest
     networks:
       default:
         aliases:
@@ -121,7 +121,7 @@ services:
       PRE_RESOLVE: 1
 
   proxy_fonts_gstatic_com:
-    image: tecnativa/whitelist
+    image: ghcr.io/tecnativa/docker-whitelist:latest
     networks:
       default:
         aliases:
@@ -132,7 +132,7 @@ services:
       PRE_RESOLVE: 1
 
   proxy_www_google_com:
-    image: tecnativa/whitelist
+    image: ghcr.io/tecnativa/docker-whitelist:latest
     networks:
       default:
         aliases:
@@ -143,7 +143,7 @@ services:
       PRE_RESOLVE: 1
 
   proxy_www_googleapis_com:
-    image: tecnativa/whitelist
+    image: ghcr.io/tecnativa/docker-whitelist:latest
     networks:
       default:
         aliases:
@@ -154,7 +154,7 @@ services:
       PRE_RESOLVE: 1
 
   proxy_www_gravatar_com:
-    image: tecnativa/whitelist
+    image: ghcr.io/tecnativa/docker-whitelist:latest
     networks:
       default:
         aliases:

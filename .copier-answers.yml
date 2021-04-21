@@ -1,10 +1,11 @@
-# Changes here will be overwritten by Copier
-_commit: v2.5.0a3
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: v2.8.0a2
 _src_path: https://github.com/Tecnativa/doodba-copier-template.git
 backup_deletion: false
 backup_dst: ""
 backup_email_from: backup@example.com
 backup_email_to: alerts@example.com
+backup_image_version: latest
 backup_tz: UTC
 cidr_whitelist: null
 domains_prod: []
@@ -32,3 +33,4 @@ smtp_default_from: ""
 smtp_relay_host: ""
 smtp_relay_port: 587
 smtp_relay_user: postmaster@example.com
+smtp_relay_version: "9.0"
