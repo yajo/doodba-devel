@@ -1,5 +1,6 @@
 account-financial-reporting: ["*"]
 account-invoice-reporting: ["*"]
+account-invoicing: ["*"]
 commission: ["*"]
 credit-control: ["*"]
 data-protection: ["*"]
