@@ -6,6 +6,7 @@ Contains common helpers to develop using this child project.
 """
 import json
 import os
+import stat
 import tempfile
 import time
 from itertools import chain
@@ -111,7 +112,6 @@ def write_code_workspace_file(c, cw_path=None):
     cw_config["settings"].update(
         {
             "python.autoComplete.extraPaths": [f"{str(SRC_PATH)}/odoo"],
-            "python.languageServer": "Jedi",
             "python.linting.flake8Enabled": True,
             "python.linting.ignorePatterns": [f"{str(SRC_PATH)}/odoo/**/*.py"],
             "python.linting.pylintArgs": [
@@ -529,6 +529,31 @@ def install(c, modules=None, cur_file=None, core=False, extra=False, private=Fal
         )
 
 
+def _get_module_dependencies(c, modules=None, core=False, extra=False, private=False):
+    """Returns a list of the addons' dependencies
+
+    By default, refers to the addon from directory being worked on,
+    unless other options are specified.
+    """
+    # Get list of dependencies for addon
+    cmd = "docker-compose run --rm odoo addons list --dependencies"
+    if core:
+        cmd += " --core"
+    if extra:
+        cmd += " --extra"
+    if private:
+        cmd += " --private"
+    if modules:
+        cmd += f" -w {modules}"
+    with c.cd(str(PROJECT_ROOT)):
+        dependencies = c.run(
+            cmd,
+            env=UID_ENV,
+            hide="stdout",
+        ).stdout.splitlines()[-1]
+    return dependencies
+
+
 def _test_in_debug_mode(c, odoo_command):
     with tempfile.NamedTemporaryFile(
         mode="w", suffix=".yaml"
@@ -556,10 +581,40 @@ def _test_in_debug_mode(c, odoo_command):
         time.sleep(SERVICES_WAIT_TIME)
 
 
+def _get_module_list(c, modules=None, core=False, extra=False, private=False):
+    """Returns a list of addons according to the passed parameters.
+
+    By default, refers to the addon from directory being worked on,
+    unless other options are specified.
+    """
+    # Get list of dependencies for addon
+    cmd = "docker-compose run --rm odoo addons list"
+    if core:
+        cmd += " --core"
+    if extra:
+        cmd += " --extra"
+    if private:
+        cmd += " --private"
+    if modules:
+        cmd += f" -w {modules}"
+    with c.cd(str(PROJECT_ROOT)):
+        module_list = c.run(
+            cmd,
+            env=UID_ENV,
+            pty=True,
+            hide="stdout",
+        ).stdout.splitlines()[-1]
+    return module_list
+
+
 @task(
     develop,
     help={
         "modules": "Comma-separated list of modules to test.",
+        "core": "Test all core addons. Default: False",
+        "extra": "Test all extra addons. Default: False",
+        "private": "Test all private addons. Default: False",
+        "skip": "List of addons to skip. Default: []",
         "debugpy": "Whether or not to run tests in a VSCode debugging session. "
         "Default: False",
         "cur-file": "Path to the current file."
@@ -567,7 +622,17 @@ def _test_in_debug_mode(c, odoo_command):
         "mode": "Mode in which tests run. Options: ['init'(default), 'update']",
     },
 )
-def test(c, modules=None, debugpy=False, cur_file=None, mode="init"):
+def test(
+    c,
+    modules=None,
+    core=False,
+    extra=False,
+    private=False,
+    skip="",
+    debugpy=False,
+    cur_file=None,
+    mode="init",
+):
     """Run Odoo tests
 
     By default, tests addon from directory being worked on,
@@ -575,17 +640,18 @@ def test(c, modules=None, debugpy=False, cur_file=None, mode="init"):
 
     NOTE: Odoo must be restarted manually after this to go back to normal mode
     """
-    if not modules:
+    if not (modules or core or extra or private):
         cur_module = _get_cwd_addon(cur_file or Path.cwd())
         if not cur_module:
             raise exceptions.ParseError(
-                msg="Odoo addon to test not found. "
-                "You must provide at least one option for modules/file "
-                "or be in a subdirectory of one. "
-                "See --help for details."
+                msg="Odoo addon to install not found. "
+                "You must provide at least one option for modules"
+                " or be in a subdirectory of one."
+                " See --help for details."
             )
-        else:
-            modules = cur_module
+        modules = cur_module
+    else:
+        modules = _get_module_list(c, modules, core, extra, private)
     odoo_command = ["odoo", "--test-enable", "--stop-after-init", "--workers=0"]
     if mode == "init":
         odoo_command.append("-i")
@@ -595,11 +661,28 @@ def test(c, modules=None, debugpy=False, cur_file=None, mode="init"):
         raise exceptions.ParseError(
             msg="Available modes are 'init' or 'update'. See --help for details."
         )
+    # Skip test in some modules
+    modules_list = modules.split(",")
+    for m_to_skip in skip.split(","):
+        if not m_to_skip:
+            continue
+        if m_to_skip not in modules:
+            _logger.warn(
+                "%s not found in the list of addons to test: %s" % (m_to_skip, modules)
+            )
+        modules_list.remove(m_to_skip)
+    modules = ",".join(modules_list)
     odoo_command.append(modules)
+    if ODOO_VERSION >= 12:
+        # Limit tests to explicit list
+        # Filter spec format (comma-separated)
+        # [-][tag][/module][:class][.method]
+        odoo_command.extend(["--test-tags", "/" + ",/".join(modules_list)])
     if debugpy:
         _test_in_debug_mode(c, odoo_command)
     else:
-        cmd = ["docker-compose", "run", "--rm", "odoo"]
+        cmd = ["docker-compose", "run", "--rm"]
+        cmd.append("odoo")
         cmd.extend(odoo_command)
         with c.cd(str(PROJECT_ROOT)):
             c.run(
@@ -615,11 +698,9 @@ def test(c, modules=None, debugpy=False, cur_file=None, mode="init"):
 )
 def stop(c, purge=False):
     """Stop and (optionally) purge environment."""
-    cmd = "docker-compose"
+    cmd = "docker-compose down"
     if purge:
-        cmd += " down --remove-orphans --rmi local --volumes"
-    else:
-        cmd += " stop"
+        cmd += " --remove-orphans --rmi local --volumes"
     with c.cd(str(PROJECT_ROOT)):
         c.run(cmd, pty=True)
 
@@ -629,14 +710,36 @@ def stop(c, purge=False):
     help={
         "dbname": "The DB that will be DESTROYED and recreated. Default: 'devel'.",
         "modules": "Comma-separated list of modules to install. Default: 'base'.",
+        "core": "Install all core addons. Default: False",
+        "extra": "Install all extra addons. Default: False",
+        "private": "Install all private addons. Default: False",
+        "populate": "Run preparedb task right after (only available for v11+)."
+        " Default: True",
+        "dependencies": "Install only the dependencies of the specified addons."
+        "Default: False",
     },
 )
-def resetdb(c, modules="base", dbname="devel"):
+def resetdb(
+    c,
+    modules=None,
+    core=False,
+    extra=False,
+    private=False,
+    dbname="devel",
+    populate=True,
+    dependencies=False,
+):
     """Reset the specified database with the specified modules.
 
     Uses click-odoo-initdb behind the scenes, which has a caching system that
     makes DB resets quicker. See its docs for more info.
     """
+    if dependencies:
+        modules = _get_module_dependencies(c, modules, core, extra, private)
+    elif core or extra or private:
+        modules = _get_module_list(c, modules, core, extra, private)
+    else:
+        modules = modules or "base"
     with c.cd(str(PROJECT_ROOT)):
         c.run("docker-compose stop odoo", pty=True)
         _run = "docker-compose run --rm -l traefik.enable=false odoo"
@@ -648,6 +751,31 @@ def resetdb(c, modules="base", dbname="devel"):
         )
         c.run(
             f"{_run} click-odoo-initdb -n {dbname} -m {modules}",
+            env=UID_ENV,
+            pty=True,
+        )
+    if populate and ODOO_VERSION < 11:
+        _logger.warn(
+            "Skipping populate task as it is not available in v%s" % ODOO_VERSION
+        )
+        populate = False
+    if populate:
+        preparedb(c)
+
+
+@task(develop)
+def preparedb(c):
+    """Run the `preparedb` script inside the container
+
+    Populates the DB with some helpful config
+    """
+    if ODOO_VERSION < 11:
+        raise exceptions.PlatformError(
+            "The preparedb script is not available for Doodba environments bellow v11."
+        )
+    with c.cd(str(PROJECT_ROOT)):
+        c.run(
+            "docker-compose run --rm -l traefik.enable=false odoo preparedb",
             env=UID_ENV,
             pty=True,
         )
@@ -683,3 +811,16 @@ def logs(c, tail=10, follow=True, container=None):
         cmd += f" {container.replace(',', ' ')}"
     with c.cd(str(PROJECT_ROOT)):
         c.run(cmd, pty=True)
+
+
+@task
+def after_update(c):
+    """Execute some actions after a copier update or init"""
+    # Make custom build script executable
+    if ODOO_VERSION < 11:
+        script_file = Path(
+            PROJECT_ROOT, "odoo", "custom", "build.d", "20-update-pg-repos"
+        )
+        cur_stat = script_file.stat()
+        # Like chmod ug+x
+        script_file.chmod(cur_stat.st_mode | stat.S_IXUSR | stat.S_IXGRP)
