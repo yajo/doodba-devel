@@ -44,7 +44,6 @@ services:
       WITHOUT_DEMO: "${DOODBA_WITHOUT_DEMO-false}"
       # Security PIN for werkzeug post-morten debugging
       WERKZEUG_DEBUG_PIN: "${WERKZEUG_DEBUG_PIN:-12069}"
-      DB_FILTER: "^devel"
     volumes:
       - ./odoo/custom:/opt/odoo/custom:ro,z
       - ./odoo/auto:/opt/odoo/auto:rw,z
