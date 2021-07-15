@@ -1,5 +1,5 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
-_commit: v3.0.0a0
+_commit: v3.0.0
 _src_path: https://github.com/Tecnativa/doodba-copier-template.git
 backup_deletion: false
 backup_dst: ""
