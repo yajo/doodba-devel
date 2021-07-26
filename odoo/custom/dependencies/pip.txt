@@ -1,2 +1,4 @@
 git+https://github.com/OCA/openupgradelib.git@master
 ptpython
+
+freezegun
