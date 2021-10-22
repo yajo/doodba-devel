@@ -15,6 +15,7 @@ services:
       PGUSER: &dbuser "odoo"
       DB_FILTER: ".*"
       PROXY_MODE: "true"
+      LIST_DB: "false"
     hostname: "example.com"
     tty: true
     volumes:
