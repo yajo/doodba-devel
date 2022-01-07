@@ -72,7 +72,7 @@ services:
       POSTGRES_PASSWORD: odoopassword
 
   pgweb:
-    image: sosedoff/pgweb
+    image: docker.io/sosedoff/pgweb
     networks: *public
     ports:
       - "127.0.0.1:13081:8081"
@@ -90,7 +90,7 @@ services:
       - "127.0.0.1:13025:8025"
 
   wdb:
-    image: kozea/wdb
+    image: docker.io/kozea/wdb
     networks: *public
     ports:
       - "127.0.0.1:13984:1984"
@@ -166,7 +166,7 @@ services:
 
 networks:
   default:
-    internal: true
+    internal: ${DOODBA_NETWORK_INTERNAL-true}
   public:
 
 volumes:

@@ -13,7 +13,6 @@ services:
       EMAIL_FROM: ""
       PGDATABASE: &dbname prod
       PGUSER: &dbuser "odoo"
-      DB_FILTER: ".*"
       PROXY_MODE: "true"
       LIST_DB: "false"
     hostname: "example.com"
@@ -28,7 +27,7 @@ services:
 
   db:
     image: ghcr.io/tecnativa/postgres-autoconf:10-alpine
-    shm_size: 512mb
+    shm_size: 4gb
     environment:
       POSTGRES_DB: *dbname
       POSTGRES_USER: *dbuser
@@ -38,7 +37,7 @@ services:
       - db:/var/lib/postgresql/data:z
 
   smtpfake:
-    image: mailhog/mailhog
+    image: docker.io/mailhog/mailhog
 
   smtpreal:
     image: ghcr.io/docker-mailserver/docker-mailserver:9.0
@@ -74,6 +73,7 @@ services:
     domainname: www.example.com
     init: true
     environment:
+      DBS_TO_INCLUDE: ".*"
       DST: "s3://s3.amazonaws.com/example-bkp"
       EMAIL_FROM: "backup@example.com"
       EMAIL_TO: "alerts@example.com"
