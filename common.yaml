@@ -12,8 +12,8 @@ services:
       EMAIL_FROM: ""
       PGDATABASE: &dbname prod
       PGUSER: &dbuser "odoo"
-      DB_FILTER: ".*"
       PROXY_MODE: "true"
+      LIST_DB: "true"
     hostname: "example.com"
     tty: true
     volumes:
@@ -26,7 +26,7 @@ services:
 
   db:
     image: ghcr.io/tecnativa/postgres-autoconf:13-alpine
-    shm_size: 512mb
+    shm_size: 4gb
     environment:
       POSTGRES_DB: *dbname
       POSTGRES_USER: *dbuser
@@ -36,4 +36,4 @@ services:
       - db:/var/lib/postgresql/data:z
 
   smtpfake:
-    image: mailhog/mailhog
+    image: docker.io/mailhog/mailhog

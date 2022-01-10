@@ -1,6 +1,6 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
-_commit: v3.0.0
-_src_path: https://github.com/Tecnativa/doodba-copier-template.git
+_commit: v4.0.0-5-gaab7e9d
+_src_path: https://github.com/moduon/doodba-copier-template.git
 backup_deletion: false
 backup_dst: ""
 backup_email_from: backup@example.com

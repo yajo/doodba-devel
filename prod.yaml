@@ -10,6 +10,7 @@ services:
       - .docker/odoo.env
       - .docker/db-access.env
     environment:
+      DB_FILTER: ".*"
       DOODBA_ENVIRONMENT: "${DOODBA_ENVIRONMENT-prod}"
       INITIAL_LANG: "en_US"
     depends_on:
