@@ -1,6 +1,6 @@
 # Use this environment to download all repositories from `repos.yaml` file:
 #
-#   export UID="$(id -u $USER)" GID="$(id -g $USER)" UMASK="$(umask)"
+#   export DOODBA_GITAGGREGATE_UID="$(id -u $USER)" DOODBA_GITAGGREGATE_GID="$(id -g $USER)" DOODBA_UMASK="$(umask)"
 #   docker-compose -f setup-devel.yaml run --rm odoo
 #
 # You can clean your git project before if you want to have all really clean:
@@ -11,13 +11,13 @@ version: "2.4"
 
 services:
   odoo:
-    image: docker.io/myuser/myproject-odoo:14.0
+    image: docker.io/myuser/myproject-odoo:15.0
     build:
       context: ./odoo
       args:
         AGGREGATE: "false"
         DEPTH_DEFAULT: 100
-        ODOO_VERSION: "14.0"
+        ODOO_VERSION: "15.0"
         PYTHONOPTIMIZE: ""
         PIP_INSTALL_ODOO: "false"
         CLEAN: "false"
@@ -31,9 +31,9 @@ services:
     environment:
       DEPTH_DEFAULT: 100
       # XXX Export these variables before running setup to own the files
-      UID: "${UID:-1000}"
-      GID: "${GID:-1000}"
-      UMASK: "$UMASK"
+      UID: "${DOODBA_GITAGGREGATE_UID:-1000}"
+      GID: "${DOODBA_GITAGGREGATE_GID:-1000}"
+      UMASK: "$DOODBA_UMASK"
     user: root
     entrypoint: autoaggregate
 
