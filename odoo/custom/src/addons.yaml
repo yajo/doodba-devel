@@ -1,0 +1,5 @@
+account-financial-reporting: ["*"]
+project: ["*"]
+reporting-engine: ["*"]
+server-tools: ["*"]
+server-ux: ["*"]
