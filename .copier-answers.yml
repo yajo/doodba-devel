@@ -1,5 +1,5 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
-_commit: v4.1.0a0-1-g6016a59
+_commit: v4.2.0
 _src_path: gh:Tecnativa/doodba-copier-template
 backup_deletion: false
 backup_dst: s3://s3.amazonaws.com/example-bkp
@@ -30,7 +30,10 @@ odoo_version: 15.0
 paths_without_crawlers:
   - /web
   - /website/info
+postgres_cidr_whitelist: null
 postgres_dbname: prod
+postgres_exposed: false
+postgres_exposed_port: 5432
 postgres_username: odoo
 postgres_version: "12"
 project_author: Tecnativa

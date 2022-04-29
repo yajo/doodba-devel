@@ -1,5 +1,5 @@
 [![Doodba deployment](https://img.shields.io/badge/deployment-doodba-informational)](https://github.com/Tecnativa/doodba)
-[![Last template update](https://img.shields.io/badge/last%20template%20update-v4.1.0a0--1--g6016a59-informational)](https://github.com/Tecnativa/doodba-copier-template/tree/v4.1.0a0-1-g6016a59)
+[![Last template update](https://img.shields.io/badge/last%20template%20update-v4.2.0-informational)](https://github.com/Tecnativa/doodba-copier-template/tree/v4.2.0)
 [![Odoo](https://img.shields.io/badge/odoo-v15.0-a3478a)](https://github.com/odoo/odoo/tree/15.0)
 [![pipeline status](https://gitlab.com/example/doodba-devel-master/badges/15.0/pipeline.svg)](https://gitlab.com/example/doodba-devel-master/commits/15.0)
 [![coverage report](https://gitlab.com/example/doodba-devel-master/badges/15.0/coverage.svg)](https://gitlab.com/example/doodba-devel-master/commits/15.0)
