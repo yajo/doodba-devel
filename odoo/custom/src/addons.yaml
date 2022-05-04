@@ -1,4 +1,5 @@
 account-financial-reporting: ["*"]
+account-financial-tools: ["*"]
 project: ["*"]
 reporting-engine: ["*"]
 server-tools: ["*"]
