@@ -4,8 +4,8 @@
     depth: $DEPTH_MERGE
   remotes:
     origin: https://github.com/odoo/odoo.git
-  target: origin master
+  target: origin 15.0
   merges:
-    - origin master
+    - origin 15.0
     # Example of a merge of the PR with the number <PR>
     # - oca refs/pull/<PR>/head
