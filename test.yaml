@@ -31,34 +31,34 @@ services:
       traefik.forbiddenCrawlers-0.frontend.rule: Host:test.example.com;Path:/{anything:.*}
       traefik.longpolling-0.frontend.rule: Host:test.example.com;Path:/longpolling/{anything:.*}
       traefik.longpolling-0.port: 8072
-      traefik.http.services.doodba-devel-master-14-0-test-main.loadbalancer.server.port: 8069
-      traefik.http.services.doodba-devel-master-14-0-test-longpolling.loadbalancer.server.port: 8072
-      traefik.http.routers.doodba-devel-master-14-0-test-longpolling-0.rule:
+      traefik.http.services.doodba-devel-master-15-0-test-main.loadbalancer.server.port: 8069
+      traefik.http.services.doodba-devel-master-15-0-test-longpolling.loadbalancer.server.port: 8072
+      traefik.http.routers.doodba-devel-master-15-0-test-longpolling-0.rule:
         Host(`test.example.com`) && PathPrefix(`/longpolling/`)
-      traefik.http.routers.doodba-devel-master-14-0-test-longpolling-0.service: doodba-devel-master-14-0-test-longpolling
-      traefik.http.routers.doodba-devel-master-14-0-test-longpolling-0.middlewares: doodba-devel-master-14-0-test-forceSecure
-      traefik.http.routers.doodba-devel-master-14-0-test-longpolling-secure-0.rule:
+      traefik.http.routers.doodba-devel-master-15-0-test-longpolling-0.service: doodba-devel-master-15-0-test-longpolling
+      traefik.http.routers.doodba-devel-master-15-0-test-longpolling-0.middlewares: doodba-devel-master-15-0-test-forceSecure
+      traefik.http.routers.doodba-devel-master-15-0-test-longpolling-secure-0.rule:
         Host(`test.example.com`) && PathPrefix(`/longpolling/`)
-      traefik.http.routers.doodba-devel-master-14-0-test-longpolling-secure-0.service: doodba-devel-master-14-0-test-longpolling
-      traefik.http.routers.doodba-devel-master-14-0-test-longpolling-secure-0.middlewares: doodba-devel-master-14-0-test-forceSecure
-      traefik.http.routers.doodba-devel-master-14-0-test-longpolling-secure-0.tls: "true"
-      traefik.http.routers.doodba-devel-master-14-0-test-longpolling-secure-0.tls.certResolver: letsencrypt
-      traefik.http.routers.doodba-devel-master-14-0-test-forbiddenCrawlers-0.rule:
+      traefik.http.routers.doodba-devel-master-15-0-test-longpolling-secure-0.service: doodba-devel-master-15-0-test-longpolling
+      traefik.http.routers.doodba-devel-master-15-0-test-longpolling-secure-0.middlewares: doodba-devel-master-15-0-test-forceSecure
+      traefik.http.routers.doodba-devel-master-15-0-test-longpolling-secure-0.tls: "true"
+      traefik.http.routers.doodba-devel-master-15-0-test-longpolling-secure-0.tls.certResolver: letsencrypt
+      traefik.http.routers.doodba-devel-master-15-0-test-forbiddenCrawlers-0.rule:
         Host(`test.example.com`) && (PathPrefix(`/`))
-      traefik.http.routers.doodba-devel-master-14-0-test-forbiddenCrawlers-0.service: doodba-devel-master-14-0-test-main
-      ? traefik.http.routers.doodba-devel-master-14-0-test-forbiddenCrawlers-0.middlewares
-      : doodba-devel-master-14-0-test-buffering, doodba-devel-master-14-0-test-compress,
-        doodba-devel-master-14-0-test-forbid-crawlers,
-        doodba-devel-master-14-0-test-forceSecure
-      ? traefik.http.routers.doodba-devel-master-14-0-test-forbiddenCrawlers-secure-0.rule
+      traefik.http.routers.doodba-devel-master-15-0-test-forbiddenCrawlers-0.service: doodba-devel-master-15-0-test-main
+      ? traefik.http.routers.doodba-devel-master-15-0-test-forbiddenCrawlers-0.middlewares
+      : doodba-devel-master-15-0-test-buffering, doodba-devel-master-15-0-test-compress,
+        doodba-devel-master-15-0-test-forbid-crawlers,
+        doodba-devel-master-15-0-test-forceSecure
+      ? traefik.http.routers.doodba-devel-master-15-0-test-forbiddenCrawlers-secure-0.rule
       : Host(`test.example.com`) && (PathPrefix(`/`))
-      traefik.http.routers.doodba-devel-master-14-0-test-forbiddenCrawlers-secure-0.service: doodba-devel-master-14-0-test-main
-      ? traefik.http.routers.doodba-devel-master-14-0-test-forbiddenCrawlers-secure-0.middlewares
-      : doodba-devel-master-14-0-test-buffering, doodba-devel-master-14-0-test-compress,
-        doodba-devel-master-14-0-test-forbid-crawlers,
-        doodba-devel-master-14-0-test-forceSecure
-      traefik.http.routers.doodba-devel-master-14-0-test-forbiddenCrawlers-secure-0.tls: "true"
-      traefik.http.routers.doodba-devel-master-14-0-test-forbiddenCrawlers-secure-0.tls.certResolver: letsencrypt
+      traefik.http.routers.doodba-devel-master-15-0-test-forbiddenCrawlers-secure-0.service: doodba-devel-master-15-0-test-main
+      ? traefik.http.routers.doodba-devel-master-15-0-test-forbiddenCrawlers-secure-0.middlewares
+      : doodba-devel-master-15-0-test-buffering, doodba-devel-master-15-0-test-compress,
+        doodba-devel-master-15-0-test-forbid-crawlers,
+        doodba-devel-master-15-0-test-forceSecure
+      traefik.http.routers.doodba-devel-master-15-0-test-forbiddenCrawlers-secure-0.tls: "true"
+      traefik.http.routers.doodba-devel-master-15-0-test-forbiddenCrawlers-secure-0.tls.certResolver: letsencrypt
     command:
       - odoo
       - --workers=2
@@ -90,33 +90,33 @@ services:
       traefik.mailhog-0.frontend.rule: Host:test.example.com;PathPrefixStrip:/smtpfake/
       traefik.mailhog-0.port: 8025
       # Mailhog service
-      traefik.http.middlewares.doodba-devel-master-14-0-test-mailhog-stripprefix.stripPrefix.prefixes: /smtpfake/
-      traefik.http.services.doodba-devel-master-14-0-test-mailhog.loadbalancer.server.port: 8025
-      ? traefik.http.middlewares.doodba-devel-master-14-0-test-buffering.buffering.retryExpression
+      traefik.http.middlewares.doodba-devel-master-15-0-test-mailhog-stripprefix.stripPrefix.prefixes: /smtpfake/
+      traefik.http.services.doodba-devel-master-15-0-test-mailhog.loadbalancer.server.port: 8025
+      ? traefik.http.middlewares.doodba-devel-master-15-0-test-buffering.buffering.retryExpression
       : IsNetworkError() && Attempts() < 5
-      traefik.http.middlewares.doodba-devel-master-14-0-test-compress.compress: "true"
-      ? traefik.http.middlewares.doodba-devel-master-14-0-test-forbid-crawlers.headers.customResponseHeaders.X-Robots-Tag
+      traefik.http.middlewares.doodba-devel-master-15-0-test-compress.compress: "true"
+      ? traefik.http.middlewares.doodba-devel-master-15-0-test-forbid-crawlers.headers.customResponseHeaders.X-Robots-Tag
       : "noindex, nofollow"
-      traefik.http.middlewares.doodba-devel-master-14-0-test-forceSecure.headers.forceSTSHeader: "true"
-      traefik.http.middlewares.doodba-devel-master-14-0-test-forceSecure.headers.sslRedirect: "true"
-      traefik.http.routers.doodba-devel-master-14-0-test-mailhog-0.rule:
+      traefik.http.middlewares.doodba-devel-master-15-0-test-forceSecure.headers.forceSTSHeader: "true"
+      traefik.http.middlewares.doodba-devel-master-15-0-test-forceSecure.headers.sslRedirect: "true"
+      traefik.http.routers.doodba-devel-master-15-0-test-mailhog-0.rule:
         Host(`test.example.com`) && PathPrefix(`/smtpfake/`)
-      traefik.http.routers.doodba-devel-master-14-0-test-mailhog-0.service: doodba-devel-master-14-0-test-mailhog
-      traefik.http.routers.doodba-devel-master-14-0-test-mailhog-0.middlewares:
-        doodba-devel-master-14-0-test-buffering, doodba-devel-master-14-0-test-compress,
-        doodba-devel-master-14-0-test-forbid-crawlers,
-        doodba-devel-master-14-0-test-forceSecure,
-        doodba-devel-master-14-0-test-mailhog-stripprefix
-      traefik.http.routers.doodba-devel-master-14-0-test-mailhog-secure-0.rule:
+      traefik.http.routers.doodba-devel-master-15-0-test-mailhog-0.service: doodba-devel-master-15-0-test-mailhog
+      traefik.http.routers.doodba-devel-master-15-0-test-mailhog-0.middlewares:
+        doodba-devel-master-15-0-test-buffering, doodba-devel-master-15-0-test-compress,
+        doodba-devel-master-15-0-test-forbid-crawlers,
+        doodba-devel-master-15-0-test-forceSecure,
+        doodba-devel-master-15-0-test-mailhog-stripprefix
+      traefik.http.routers.doodba-devel-master-15-0-test-mailhog-secure-0.rule:
         Host(`test.example.com`) && PathPrefix(`/smtpfake/`)
-      traefik.http.routers.doodba-devel-master-14-0-test-mailhog-secure-0.service: doodba-devel-master-14-0-test-mailhog
-      traefik.http.routers.doodba-devel-master-14-0-test-mailhog-secure-0.middlewares:
-        doodba-devel-master-14-0-test-buffering, doodba-devel-master-14-0-test-compress,
-        doodba-devel-master-14-0-test-forbid-crawlers,
-        doodba-devel-master-14-0-test-forceSecure,
-        doodba-devel-master-14-0-test-mailhog-stripprefix
-      traefik.http.routers.doodba-devel-master-14-0-test-mailhog-secure-0.tls: "true"
-      traefik.http.routers.doodba-devel-master-14-0-test-mailhog-secure-0.tls.certResolver: letsencrypt
+      traefik.http.routers.doodba-devel-master-15-0-test-mailhog-secure-0.service: doodba-devel-master-15-0-test-mailhog
+      traefik.http.routers.doodba-devel-master-15-0-test-mailhog-secure-0.middlewares:
+        doodba-devel-master-15-0-test-buffering, doodba-devel-master-15-0-test-compress,
+        doodba-devel-master-15-0-test-forbid-crawlers,
+        doodba-devel-master-15-0-test-forceSecure,
+        doodba-devel-master-15-0-test-mailhog-stripprefix
+      traefik.http.routers.doodba-devel-master-15-0-test-mailhog-secure-0.tls: "true"
+      traefik.http.routers.doodba-devel-master-15-0-test-mailhog-secure-0.tls.certResolver: letsencrypt
     volumes:
       - "smtpconf:/etc/mailhog:ro,z"
     entrypoint: [sh, -c]
@@ -125,7 +125,7 @@ services:
 
 networks:
   default:
-    internal: true
+    internal: ${DOODBA_NETWORK_INTERNAL-true}
     driver_opts:
       encrypted: 1
 

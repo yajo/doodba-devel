@@ -2,19 +2,19 @@ version: "2.4"
 
 services:
   odoo:
-    image: docker.io/myuser/myproject-odoo:14.0
+    image: docker.io/myuser/myproject-odoo:15.0
     build:
       context: ./odoo
       args:
-        ODOO_VERSION: "14.0"
+        ODOO_VERSION: "15.0"
         UID: "${UID:-1000}"
         GID: "${GID:-1000}"
     environment:
       EMAIL_FROM: ""
-      PGDATABASE: &dbname prod
+      PGDATABASE: &dbname odoo
       PGUSER: &dbuser "odoo"
-      DB_FILTER: ".*"
       PROXY_MODE: "true"
+      LIST_DB: "true"
     hostname: "example.com"
     tty: true
     volumes:
@@ -26,8 +26,8 @@ services:
       traefik.port: "8069"
 
   db:
-    image: ghcr.io/tecnativa/postgres-autoconf:12-alpine
-    shm_size: 512mb
+    image: ghcr.io/tecnativa/postgres-autoconf:13-alpine
+    shm_size: 4gb
     environment:
       POSTGRES_DB: *dbname
       POSTGRES_USER: *dbuser
@@ -37,10 +37,10 @@ services:
       - db:/var/lib/postgresql/data:z
 
   smtpfake:
-    image: mailhog/mailhog
+    image: docker.io/mailhog/mailhog
 
   smtpreal:
-    image: tvial/docker-mailserver:latest
+    image: ghcr.io/docker-mailserver/docker-mailserver:10
     domainname: "example.com"
     stop_grace_period: 1m
     volumes:
@@ -68,11 +68,12 @@ services:
       SRS_SENDER_CLASSES: envelope_sender,header_sender
 
   backup:
-    image: tecnativa/duplicity:postgres-s3
+    image: ghcr.io/tecnativa/docker-duplicity-postgres-s3:latest
     hostname: backup
     domainname: www.example.com
     init: true
     environment:
+      DBS_TO_INCLUDE: "^odoo"
       DST: "s3://s3.amazonaws.com/example-bkp"
       EMAIL_FROM: "backup@example.com"
       EMAIL_TO: "alerts@example.com"

@@ -1,10 +1,11 @@
-# Changes here will be overwritten by Copier
-_commit: 2.5.0
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: v4.2.0
 _src_path: https://github.com/Tecnativa/doodba-copier-template.git
 backup_deletion: false
 backup_dst: s3://s3.amazonaws.com/example-bkp
 backup_email_from: backup@example.com
 backup_email_to: alerts@example.com
+backup_image_version: latest
 backup_tz: UTC
 cidr_whitelist: null
 domains_prod:
@@ -19,20 +20,23 @@ domains_test:
   - cert_resolver: letsencrypt
     hosts:
       - test.example.com
-gitlab_url: https://gitlab.com/example/doodba-devel-master
-odoo_dbfilter: .*
-odoo_initial_lang: ""
+gitlab_url: ""
+odoo_dbfilter: ^odoo
+odoo_initial_lang: en_US
 odoo_listdb: true
 odoo_oci_image: docker.io/myuser/myproject-odoo
 odoo_proxy: traefik
-odoo_version: 14.0
+odoo_version: 15.0
 paths_without_crawlers:
   - /web
   - /website/info
-postgres_dbname: prod
+postgres_cidr_whitelist: null
+postgres_dbname: odoo
+postgres_exposed: false
+postgres_exposed_port: 5432
 postgres_username: odoo
-postgres_version: 12
-project_author: Tecnativa
+postgres_version: "13"
+project_author: Moduon
 project_license: BSL-1.0
 project_name: doodba-devel-master
 smtp_canonical_default: example.com
@@ -42,3 +46,4 @@ smtp_default_from: ""
 smtp_relay_host: smtp.example.com
 smtp_relay_port: 587
 smtp_relay_user: postmaster@example.com
+smtp_relay_version: "10"
